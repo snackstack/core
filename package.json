@@ -1,0 +1,33 @@
+{
+  "name": "snackstack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobias-tengler/snackstack.git"
+  },
+  "author": "Tobias Tengler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tobias-tengler/snackstack/issues"
+  },
+  "homepage": "https://github.com/tobias-tengler/snackstack#readme",
+  "files": [
+    "build/*"
+  ],
+  "scripts": {
+    "build": "babel ./src --out-dir ./build"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "@material-ui/core": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0"
+  }
+}
