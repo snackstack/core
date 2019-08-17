@@ -1,2 +1,7 @@
 src
 .babelrc
+.eslintignore
+.eslintrc
+.gitignore
+LICENSE.md
+README.md

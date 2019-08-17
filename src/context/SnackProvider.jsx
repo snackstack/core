@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import SnackContext from "./SnackContext";
-import { Snackbar, SnackbarContent } from "@material-ui/core";
+import React, { Component } from 'react';
+import { Snackbar, SnackbarContent } from '@material-ui/core';
+import SnackContext from './SnackContext';
 
 class SnackProvider extends Component {
   constructor(props) {
@@ -10,30 +10,30 @@ class SnackProvider extends Component {
       snacks: [],
       context: {
         enqueueSnack: this.enqueueSnack.bind(this),
-        closeSnack: this.closeSnack.bind(this)
-      }
+        closeSnack: this.closeSnack.bind(this),
+      },
     };
   }
 
   enqueueSnack = ({ message, key }) => {
-    key = key || new Date().getTime();
+    if (!key) key = new Date().getTime() + Math.random();
 
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       snacks: [
         ...prevState.snacks,
         {
-          key: key || new Date().getTime(),
-          message: message
-        }
-      ]
+          key,
+          message,
+        },
+      ],
     }));
 
     return key;
   };
 
-  closeSnack = key => {
-    this.setState(prevState => ({
-      snacks: prevState.snacks.filter(i => i.key !== key)
+  closeSnack = (key) => {
+    this.setState((prevState) => ({
+      snacks: prevState.snacks.filter((i) => i.key !== key),
     }));
   };
 
@@ -44,8 +44,8 @@ class SnackProvider extends Component {
     return (
       <SnackContext.Provider value={context}>
         {children}
-        {snacks.map((snack, index) => (
-          <Snackbar key={snack.key} open={true}>
+        {snacks.map((snack) => (
+          <Snackbar key={snack.key} open>
             <SnackbarContent
               aria-describedby="client-snackbar"
               message={<span id="client-snackbar">{snack.message}</span>}
