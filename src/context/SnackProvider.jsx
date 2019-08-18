@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Snackbar, SnackbarContent } from '@material-ui/core';
 import SnackContext from './SnackContext';
+import SnackItem from '../SnackItem/SnackItem';
 
 class SnackProvider extends Component {
   constructor(props) {
@@ -15,14 +15,18 @@ class SnackProvider extends Component {
     };
   }
 
-  enqueueSnack = ({ message, key }) => {
-    if (!key) key = new Date().getTime() + Math.random();
+  enqueueSnack = ({ message, key, ...options }) => {
+    let messageKey = key;
 
-    this.setState((prevState) => ({
+    if (!messageKey) messageKey = new Date().getTime() + Math.random();
+
+    this.setState(({ snacks }) => ({
       snacks: [
-        ...prevState.snacks,
+        ...snacks,
         {
-          key,
+          ...options,
+          key: messageKey,
+          open: true,
           message,
         },
       ],
@@ -32,25 +36,42 @@ class SnackProvider extends Component {
   };
 
   closeSnack = (key) => {
-    this.setState((prevState) => ({
-      snacks: prevState.snacks.filter((i) => i.key !== key),
+    this.handleCloseSnack(key, null, null);
+  };
+
+  handleCloseSnack = (key, event, reason) => {
+    this.setState(({ snacks }) => ({
+      snacks: snacks.map((snack) => {
+        const newSnack = { ...snack };
+
+        if (newSnack.key === key) newSnack.open = false;
+
+        return newSnack;
+      }),
+    }));
+  };
+
+  handleExitedSnack = (key, event) => {
+    this.setState(({ snacks }) => ({
+      snacks: snacks.filter((snack) => snack.key !== key),
     }));
   };
 
   render() {
-    const { children } = this.props;
+    const { options, children } = this.props;
     const { snacks, context } = this.state;
 
     return (
       <SnackContext.Provider value={context}>
         {children}
         {snacks.map((snack) => (
-          <Snackbar key={snack.key} open>
-            <SnackbarContent
-              aria-describedby="client-snackbar"
-              message={<span id="client-snackbar">{snack.message}</span>}
-            />
-          </Snackbar>
+          <SnackItem
+            key={snack.key}
+            snack={snack}
+            options={options}
+            onClose={this.handleCloseSnack}
+            onExited={this.handleExitedSnack}
+          />
         ))}
       </SnackContext.Provider>
     );
