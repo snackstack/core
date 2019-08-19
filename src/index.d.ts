@@ -3,8 +3,11 @@ import { SnackbarProps } from '@material-ui/core/Snackbar';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
+type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
+
 export interface ISnack {
   key?: string;
+  variant?: SnackVariantType;
   message: string | ReactNode;
 }
 
