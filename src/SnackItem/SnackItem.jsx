@@ -7,6 +7,8 @@ const SnackItem = (props) => {
   } = props;
 
   const handleClose = (event, reason) => {
+    if (reason === 'clickaway') return;
+
     onClose(snack.key, event, reason);
   };
 
@@ -14,9 +16,11 @@ const SnackItem = (props) => {
     onExited(snack.key, event);
   };
 
+  const { autoHideDuration } = options;
+
   return (
     <Snackbar
-      {...options}
+      autoHideDuration={autoHideDuration}
       open={snack.open}
       onClose={handleClose}
       onExited={handleExited}

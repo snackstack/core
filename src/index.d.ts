@@ -1,4 +1,5 @@
 import { ComponentType, ReactNode, ComponentClass } from 'react';
+import { SnackbarProps } from '@material-ui/core/Snackbar';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
@@ -14,6 +15,8 @@ export interface ISnackOptions {
 
 export interface ISnackProviderProps {
   options?: ISnackOptions;
+  onExited?: SnackbarProps['onExited'];
+  onClose?: SnackbarProps['onClose'];
 }
 
 export const SnackProvider: ComponentType<ISnackProviderProps>;
