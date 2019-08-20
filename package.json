@@ -1,6 +1,6 @@
 {
   "name": "snackstack",
-  "version": "1.0.0",
+  "version": "1.0.0-rc1",
   "description": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -10,7 +10,8 @@
   },
   "author": {
     "name": "Tobias Tengler",
-    "url": "https://github.com/tobias-tengler"
+    "url": "https://github.com/tobias-tengler",
+    "email": "npm.tobiastengler@gmail.com"
   },
   "license": "MIT",
   "bugs": {
