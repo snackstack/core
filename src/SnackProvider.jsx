@@ -5,6 +5,8 @@ import SnackItem from './SnackItem/SnackItem';
 class SnackProvider extends Component {
   snackQueue = [];
 
+  curSnacks = 0;
+
   constructor(props) {
     super(props);
 
@@ -16,6 +18,92 @@ class SnackProvider extends Component {
       },
     };
   }
+
+  getOffset(index) {
+    let offset = 20;
+    const spacing = 10;
+    const { snacks } = this.state;
+
+    for (let i = 0; i < index; i += 1) {
+      if (i === index) break;
+
+      const height = snacks[i].height || 52;
+
+      offset += height + spacing;
+    }
+
+    return offset;
+  }
+
+  dequeueOldestSnack = () => {
+    if (this.snackQueue.length < 1) return;
+
+    const {
+      options: { maxSnacks },
+    } = this.props;
+
+    if (this.curSnacks >= maxSnacks) return;
+
+    const oldestSnack = this.snackQueue.shift();
+
+    this.setState(({ snacks }) => ({
+      snacks: [...snacks, oldestSnack],
+    }));
+
+    this.curSnacks += 1;
+  };
+
+  handleSetSnackHeight = (key, height) => {
+    this.setState(({ snacks }) => ({
+      snacks: snacks.map((snack) => {
+        if (snack.key === key) {
+          return {
+            ...snack,
+            height,
+          };
+        }
+
+        return snack;
+      }),
+    }));
+  };
+
+  handleExitedSnack = (key, event) => {
+    this.setState(
+      ({ snacks }) => ({
+        snacks: snacks.filter((snack) => snack.key !== key),
+      }),
+      () => {
+        this.curSnacks -= 1;
+      }
+    );
+
+    const { onExited } = this.props;
+
+    if (onExited) onExited(event);
+  };
+
+  handleCloseSnack = (key, event, reason) => {
+    this.setState(
+      ({ snacks }) => ({
+        snacks: snacks.map((snack) => {
+          if (snack.key === key) {
+            return {
+              ...snack,
+              open: false,
+            };
+          }
+
+          return snack;
+        }),
+      }),
+      () => setTimeout(this.dequeueOldestSnack, 500)
+    );
+
+    const { onClose } = this.props;
+
+    if (onClose) onClose(event, reason);
+  };
 
   enqueueSnack = ({ key, message, ...options }) => {
     let messageKey = key;
@@ -40,52 +128,6 @@ class SnackProvider extends Component {
     this.handleCloseSnack(key, null, null);
   };
 
-  handleCloseSnack = (key, event, reason) => {
-    this.setState(
-      ({ snacks }) => ({
-        snacks: snacks.map((snack) => {
-          const newSnack = { ...snack };
-
-          if (newSnack.key === key) newSnack.open = false;
-
-          return newSnack;
-        }),
-      }),
-      () => setTimeout(this.dequeueOldestSnack, 500),
-    );
-
-    const { onClose } = this.props;
-
-    if (onClose) onClose(event, reason);
-  };
-
-  handleExitedSnack = (key, event) => {
-    this.setState(({ snacks }) => ({
-      snacks: snacks.filter((snack) => snack.key !== key),
-    }));
-
-    const { onExited } = this.props;
-
-    if (onExited) onExited(event);
-  };
-
-  dequeueOldestSnack = () => {
-    if (this.snackQueue.length < 1) return;
-
-    const { snacks: curSnacks } = this.state;
-    const {
-      options: { maxSnacks },
-    } = this.props;
-
-    if (curSnacks.length >= maxSnacks) return;
-
-    const oldestSnack = this.snackQueue.shift();
-
-    this.setState(({ snacks }) => ({
-      snacks: [...snacks, oldestSnack],
-    }));
-  };
-
   render() {
     const { options, children } = this.props;
     const { snacks, context } = this.state;
@@ -93,13 +135,15 @@ class SnackProvider extends Component {
     return (
       <SnackContext.Provider value={context}>
         {children}
-        {snacks.map((snack) => (
+        {snacks.map((snack, index) => (
           <SnackItem
             key={snack.key}
             snack={snack}
+            offset={this.getOffset(index)}
             options={options}
             onClose={this.handleCloseSnack}
             onExited={this.handleExitedSnack}
+            onSetSnackHeight={this.handleSetSnackHeight}
           />
         ))}
       </SnackContext.Provider>

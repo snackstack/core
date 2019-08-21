@@ -1,7 +1,9 @@
 import React from 'react';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { makeStyles } from '@material-ui/core/styles';
-import { green, blue, amber, red } from '@material-ui/core/colors';
+import {
+  green, blue, amber, red,
+} from '@material-ui/core/colors';
 
 const ErrorIcon = () => (
   <SvgIcon>
