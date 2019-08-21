@@ -24,7 +24,8 @@
   "scripts": {
     "build": "babel ./src -d ./build --copy-files",
     "prepublishOnly": "npm run build",
-    "eslint": "eslint . --ext .js,.jsx --fix"
+    "lint": "eslint . --ext .js,.jsx",
+    "lint-fix": "npm run lint -- --fix"
   },
   "peerDependencies": {
     "react": "^16.8.0",
