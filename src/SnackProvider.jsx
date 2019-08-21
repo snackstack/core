@@ -75,7 +75,7 @@ class SnackProvider extends Component {
       }),
       () => {
         this.curSnacks -= 1;
-      }
+      },
     );
 
     const { onExited } = this.props;
@@ -97,7 +97,7 @@ class SnackProvider extends Component {
           return snack;
         }),
       }),
-      () => setTimeout(this.dequeueOldestSnack, 500)
+      () => setTimeout(this.dequeueOldestSnack, 500),
     );
 
     const { onClose } = this.props;
