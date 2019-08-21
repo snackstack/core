@@ -12,8 +12,8 @@ Easy-to-use extension of [Material-UI](https://github.com/mui-org/material-ui), 
 
 | Method | Command                  |
 | :----- | :----------------------- |
-| NPM    | `npm install snackstack` |
-| YARN   | `yarn add snackstack`    |
+| npm    | `npm install snackstack` |
+| yarn   | `yarn add snackstack`    |
 
 ## Getting started
 
