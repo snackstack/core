@@ -1,5 +1,5 @@
 import { ComponentType, ReactNode, ComponentClass } from 'react';
-import { SnackbarProps, SnackbarOrigin } from '@material-ui/core/Snackbar';
+import { SnackbarOrigin } from '@material-ui/core/Snackbar';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
@@ -9,6 +9,7 @@ export interface Snack {
   key?: string | number;
   variant?: SnackVariantType;
   message: string | ReactNode;
+  persist?: boolean;
 }
 
 export interface SnackOptions {
