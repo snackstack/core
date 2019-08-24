@@ -1,9 +1,15 @@
 {
   "env": {
+    "node": true,
+    "commonjs": true,
     "browser": true,
-    "node": true
+    "es6": true
   },
-  "extends": "airbnb",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended"
+  ],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
@@ -12,10 +18,34 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["import", "jsx-a11y", "react", "react-hooks"],
+  "plugins": ["react", "react-hooks", "prettier", "sort-destructure-keys"],
   "rules": {
-    "react/prop-types": 0,
-    "react/jsx-props-no-spreading": 0,
-    "import/no-unresolved": 0
+    "react/jsx-no-bind": "off",
+    "react/prop-types": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "prefer-const": "warn",
+    "react/destructuring-assignment": "warn",
+    "sort-destructure-keys/sort-destructure-keys": "warn",
+    "no-console": "warn",
+    "no-shadow": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react/jsx-sort-props": [
+      "warn",
+      {
+        "callbacksLast": true,
+        "ignoreCase": true
+      }
+    ]
+  },
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx"]
+      }
+    }
   }
 }
