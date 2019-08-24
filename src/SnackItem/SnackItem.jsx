@@ -41,11 +41,11 @@ const SnackItem = props => {
         autoHideDuration={autoHideDuration}
         open={open}
         style={{
-          bottom: offset,
+          [anchorOrigin.vertical]: offset,
         }}
-        TransitionProps={{
-          direction: 'right',
-        }}
+        // TransitionProps={{
+        //   direction: 'right',
+        // }}
         onClose={handleClose}
         onExited={handleExited}
       >
