@@ -18,10 +18,15 @@ export interface SnackOptions {
   preventDuplicates?: boolean;
 }
 
+export type OnEnterFuncType = (key: Snack['key']) => void;
+export type OnCloseFuncType = (key: Snack['key'], reason: string) => void;
+export type OnExtitedFuncType = (key: Snack['key']) => void;
+
 export interface SnackProviderProps {
   options?: SnackOptions;
-  onExited?: SnackbarProps['onExited'];
-  onClose?: SnackbarProps['onClose'];
+  onEnter?: OnEnterFuncType;
+  onClose?: OnCloseFuncType;
+  onExited?: OnCloseFuncType;
 }
 
 export const SnackProvider: ComponentType<SnackProviderProps>;

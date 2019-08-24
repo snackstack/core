@@ -71,22 +71,13 @@ class SnackProvider extends Component {
     }));
   };
 
-  handleExitedSnack = (key, event) => {
-    this.setState(
-      ({ snacks }) => ({
-        snacks: snacks.filter(snack => snack.key !== key),
-      }),
-      () => {
-        this.curSnacks -= 1;
-      },
-    );
+  handleEnterSnack = key => {
+    const { onEnter } = this.props;
 
-    const { onExited } = this.props;
-
-    if (onExited) onExited(event);
+    if (onEnter) onEnter(key);
   };
 
-  handleCloseSnack = (key, event, reason) => {
+  handleCloseSnack = (key, reason) => {
     this.setState(
       ({ snacks }) => ({
         snacks: snacks.map(snack => {
@@ -105,7 +96,22 @@ class SnackProvider extends Component {
 
     const { onClose } = this.props;
 
-    if (onClose) onClose(event, reason);
+    if (onClose) onClose(key, reason);
+  };
+
+  handleExitedSnack = key => {
+    this.setState(
+      ({ snacks }) => ({
+        snacks: snacks.filter(snack => snack.key !== key),
+      }),
+      () => {
+        this.curSnacks -= 1;
+      },
+    );
+
+    const { onExited } = this.props;
+
+    if (onExited) onExited(key);
   };
 
   enqueueSnack = ({ key, message, ...options }) => {
@@ -123,14 +129,10 @@ class SnackProvider extends Component {
 
     const snack = {
       ...options,
-      ...key,
       message,
+      key: key || new Date().getTime() + Math.random(),
       open: true,
     };
-
-    if (!snack.key) {
-      snack.key = new Date().getTime() + Math.random();
-    }
 
     this.snackQueue.push(snack);
 
@@ -157,6 +159,7 @@ class SnackProvider extends Component {
             options={options}
             snack={snack}
             onClose={this.handleCloseSnack}
+            onEnter={this.handleEnterSnack}
             onExited={this.handleExitedSnack}
             onSetSnackHeight={this.handleSetSnackHeight}
           />
@@ -177,6 +180,7 @@ SnackProvider.propTypes = {
     preventDuplicates: PropTypes.bool,
   }),
   children: PropTypes.node.isRequired,
+  onEnter: PropTypes.func,
   onClose: PropTypes.func,
   onExited: PropTypes.func,
 };

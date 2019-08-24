@@ -9,6 +9,7 @@ const SnackItem = props => {
   const {
     offset,
     onClose,
+    onEnter,
     onExited,
     onSetSnackHeight,
     options: { anchorOrigin, autoHideDuration },
@@ -24,14 +25,18 @@ const SnackItem = props => {
     onSetSnackHeight(key, ref.current.clientHeight);
   }, [key, onSetSnackHeight]);
 
-  const handleClose = (event, reason) => {
+  const handleClose = (_, reason) => {
     if (reason === 'clickaway') return;
 
-    onClose(key, event, reason);
+    onClose(key, reason);
   };
 
-  const handleExited = event => {
-    onExited(key, event);
+  const handleEnter = () => {
+    onEnter(key);
+  };
+
+  const handleExited = () => {
+    onExited(key);
   };
 
   return (
@@ -43,10 +48,8 @@ const SnackItem = props => {
         style={{
           [anchorOrigin.vertical]: offset,
         }}
-        // TransitionProps={{
-        //   direction: 'right',
-        // }}
         onClose={handleClose}
+        onEnter={handleEnter}
         onExited={handleExited}
       >
         <SnackbarContent
@@ -79,6 +82,7 @@ SnackItem.propTypes = {
     autoHideDuration: PropTypes.number,
   }),
   offset: PropTypes.number.isRequired,
+  onEnter: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   onExited: PropTypes.func.isRequired,
   onSetSnackHeight: PropTypes.func.isRequired,
