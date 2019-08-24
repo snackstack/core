@@ -151,4 +151,21 @@ class SnackProvider extends Component {
   }
 }
 
+SnackProvider.propTypes = {
+  options: PropTypes.shape({
+    maxSnacks: PropTypes.number,
+    autoHideDuration: PropTypes.number,
+  }),
+  children: PropTypes.node.isRequired,
+  onClose: PropTypes.func,
+  onExited: PropTypes.func,
+};
+
+SnackProvider.defaultProps = {
+  options: {
+    maxSnacks: 3,
+    autoHideDuration: 2500,
+  },
+};
+
 export default SnackProvider;

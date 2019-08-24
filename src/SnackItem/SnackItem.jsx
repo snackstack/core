@@ -67,4 +67,18 @@ const SnackItem = (props) => {
   );
 };
 
+SnackItem.propTypes = {
+  snack: PropTypes.shape({
+    key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+    variant: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
+    open: PropTypes.bool.isRequired,
+  }),
+  options: PropTypes.shape({ autoHideDuration: PropTypes.number }),
+  offset: PropTypes.number.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onExited: PropTypes.func.isRequired,
+  onSetSnackHeight: PropTypes.func.isRequired,
+};
+
 export default SnackItem;
