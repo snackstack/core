@@ -116,25 +116,27 @@ class SnackProvider extends Component {
     if (preventDuplicates) {
       const { snacks } = this.state;
 
-      if (snacks.some(snack => snack.message === message)) return;
+      if (snacks.some(snack => snack.message === message)) return null;
+
+      if (this.snackQueue.some(snack => snack.message === message)) return null;
     }
-
-    let messageKey = key;
-
-    if (!messageKey) messageKey = new Date().getTime() + Math.random();
 
     const snack = {
       ...options,
-      key: messageKey,
+      ...key,
       message,
       open: true,
     };
+
+    if (!snack.key) {
+      snack.key = new Date().getTime() + Math.random();
+    }
 
     this.snackQueue.push(snack);
 
     this.dequeueOldestSnack();
 
-    return messageKey;
+    return snack.key;
   };
 
   closeSnack = key => {

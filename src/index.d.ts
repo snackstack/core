@@ -26,7 +26,7 @@ export interface SnackProviderProps {
 
 export const SnackProvider: ComponentType<SnackProviderProps>;
 
-export type EnqueueSnackFuncType = (snack: Snack) => Snack['key'];
+export type EnqueueSnackFuncType = (snack: Snack) => Snack['key'] | null;
 export type CloseSnackFuncType = (key: Snack['key']) => void;
 
 export interface WithSnacksProps {
