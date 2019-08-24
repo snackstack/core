@@ -58,5 +58,19 @@
     "react": "^16.8.0",
     "typescript": "^3.5.3"
   },
-  "keywords": []
+  "keywords": [
+    "snackstack",
+    "react",
+    "reactjs",
+    "material-ui",
+    "material-design",
+    "snackbar",
+    "toast",
+    "notifications",
+    "javascript",
+    "typescript",
+    "SnackProvider",
+    "withSnacks",
+    "useSnacks"
+  ]
 }
