@@ -109,6 +109,16 @@ class SnackProvider extends Component {
   };
 
   enqueueSnack = ({ key, message, ...options }) => {
+    const {
+      options: { preventDuplicates },
+    } = this.props;
+
+    if (preventDuplicates) {
+      const { snacks } = this.state;
+
+      if (snacks.some(snack => snack.message === message)) return;
+    }
+
     let messageKey = key;
 
     if (!messageKey) messageKey = new Date().getTime() + Math.random();
@@ -162,6 +172,7 @@ SnackProvider.propTypes = {
       horizontal: PropTypes.oneOf(['left', 'center', 'right']).isRequired,
       vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
     }),
+    preventDuplicates: PropTypes.bool,
   }),
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func,
@@ -176,6 +187,7 @@ SnackProvider.defaultProps = {
       horizontal: 'left',
       vertical: 'bottom',
     },
+    preventDuplicates: true,
   },
 };
 

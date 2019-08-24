@@ -3,7 +3,7 @@ import { SnackbarProps, SnackbarOrigin } from '@material-ui/core/Snackbar';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
-type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
+export type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
 
 export interface Snack {
   key?: string | number;
@@ -14,7 +14,8 @@ export interface Snack {
 export interface SnackOptions {
   maxSnacks?: number;
   autoHideDuration?: number;
-  anchorOrigin: SnackbarOrigin;
+  anchorOrigin?: SnackbarOrigin;
+  preventDuplicates?: boolean;
 }
 
 export interface SnackProviderProps {
@@ -25,8 +26,8 @@ export interface SnackProviderProps {
 
 export const SnackProvider: ComponentType<SnackProviderProps>;
 
-type EnqueueSnackFuncType = (snack: Snack) => string;
-type CloseSnackFuncType = (key: string) => void;
+export type EnqueueSnackFuncType = (snack: Snack) => string;
+export type CloseSnackFuncType = (key: string) => void;
 
 export interface WithSnacksProps {
   enqueueSnack: EnqueueSnackFuncType;
