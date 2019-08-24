@@ -1,15 +1,15 @@
 import React from 'react';
 import SnackContext from '../context/SnackContext';
 
-export default (Component) => {
+export default Component => {
   const contextedComponent = React.forwardRef((props, ref) => (
     <SnackContext.Consumer>
-      {(context) => (
+      {context => (
         <Component
           {...props}
-          ref={ref}
-          enqueueSnack={context.enqueueSnack}
           closeSnack={context.closeSnack}
+          enqueueSnack={context.enqueueSnack}
+          ref={ref}
         />
       )}
     </SnackContext.Consumer>

@@ -5,35 +5,35 @@ type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
 type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
 
-export interface ISnack {
-  key?: string;
+export interface Snack {
+  key?: string | number;
   variant?: SnackVariantType;
   message: string | ReactNode;
 }
 
-export interface ISnackOptions {
+export interface SnackOptions {
   maxSnacks?: number;
   autoHideDuration?: number;
 }
 
-export interface ISnackProviderProps {
-  options?: ISnackOptions;
+export interface SnackProviderProps {
+  options?: SnackOptions;
   onExited?: SnackbarProps['onExited'];
   onClose?: SnackbarProps['onClose'];
 }
 
-export const SnackProvider: ComponentType<ISnackProviderProps>;
+export const SnackProvider: ComponentType<SnackProviderProps>;
 
-type EnqueueSnackFuncType = (snack: ISnack) => string;
+type EnqueueSnackFuncType = (snack: Snack) => string;
 type CloseSnackFuncType = (key: string) => void;
 
-export interface IWithSnacksProps {
+export interface WithSnacksProps {
   enqueueSnack: EnqueueSnackFuncType;
   closeSnack: CloseSnackFuncType;
 }
 
-export function withSnacks<T extends IWithSnacksProps>(
-  component: ComponentType<T>
-): ComponentClass<Omit<T, keyof IWithSnacksProps>>;
+export function withSnacks<T extends WithSnacksProps>(
+  component: ComponentType<T>,
+): ComponentClass<Omit<T, keyof WithSnacksProps>>;
 
 export function useSnacks(): [EnqueueSnackFuncType, CloseSnackFuncType];

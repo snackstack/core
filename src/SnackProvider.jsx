@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import SnackContext from './context/SnackContext';
 import SnackItem from './SnackItem/SnackItem';
 
@@ -55,7 +56,7 @@ class SnackProvider extends Component {
 
   handleSetSnackHeight = (key, height) => {
     this.setState(({ snacks }) => ({
-      snacks: snacks.map((snack) => {
+      snacks: snacks.map(snack => {
         if (snack.key === key) {
           return {
             ...snack,
@@ -71,7 +72,7 @@ class SnackProvider extends Component {
   handleExitedSnack = (key, event) => {
     this.setState(
       ({ snacks }) => ({
-        snacks: snacks.filter((snack) => snack.key !== key),
+        snacks: snacks.filter(snack => snack.key !== key),
       }),
       () => {
         this.curSnacks -= 1;
@@ -86,7 +87,7 @@ class SnackProvider extends Component {
   handleCloseSnack = (key, event, reason) => {
     this.setState(
       ({ snacks }) => ({
-        snacks: snacks.map((snack) => {
+        snacks: snacks.map(snack => {
           if (snack.key === key) {
             return {
               ...snack,
@@ -124,13 +125,13 @@ class SnackProvider extends Component {
     return messageKey;
   };
 
-  closeSnack = (key) => {
+  closeSnack = key => {
     this.handleCloseSnack(key, null, null);
   };
 
   render() {
-    const { options, children } = this.props;
-    const { snacks, context } = this.state;
+    const { children, options } = this.props;
+    const { context, snacks } = this.state;
 
     return (
       <SnackContext.Provider value={context}>
@@ -138,9 +139,9 @@ class SnackProvider extends Component {
         {snacks.map((snack, index) => (
           <SnackItem
             key={snack.key}
-            snack={snack}
             offset={this.getOffset(index)}
             options={options}
+            snack={snack}
             onClose={this.handleCloseSnack}
             onExited={this.handleExitedSnack}
             onSetSnackHeight={this.handleSetSnackHeight}

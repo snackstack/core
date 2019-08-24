@@ -3,16 +3,16 @@ import classNames from 'classnames';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 import RootRef from '@material-ui/core/RootRef';
 import { snackItemVariantIcons, useSnackItemStyles } from './SnackItemStyles';
+import PropTypes from 'prop-types';
 
-const SnackItem = (props) => {
+const SnackItem = props => {
   const {
-    snack: {
-      key, message, variant = 'info', open,
-    },
-    options: { autoHideDuration },
     offset,
     onClose,
     onExited,
+    onSetSnackHeight,
+    options: { autoHideDuration },
+    snack: { key, message, open, variant = 'info' },
   } = props;
   const classes = useSnackItemStyles();
   const Icon = snackItemVariantIcons[variant];
@@ -21,8 +21,8 @@ const SnackItem = (props) => {
   useEffect(() => {
     if (ref.current === undefined) return;
 
-    props.onSetSnackHeight(key, ref.current.clientHeight);
-  }, []);
+    onSetSnackHeight(key, ref.current.clientHeight);
+  }, [key, onSetSnackHeight]);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') return;
@@ -30,7 +30,7 @@ const SnackItem = (props) => {
     onClose(key, event, reason);
   };
 
-  const handleExited = (event) => {
+  const handleExited = event => {
     onExited(key, event);
   };
 
@@ -41,26 +41,26 @@ const SnackItem = (props) => {
           horizontal: 'left',
           vertical: 'bottom',
         }}
-        TransitionProps={{
-          direction: 'right',
-        }}
         autoHideDuration={autoHideDuration}
         open={open}
-        onClose={handleClose}
-        onExited={handleExited}
         style={{
           bottom: offset,
         }}
+        TransitionProps={{
+          direction: 'right',
+        }}
+        onClose={handleClose}
+        onExited={handleExited}
       >
         <SnackbarContent
-          className={classes[variant]}
           aria-describedby="client-snackbar"
-          message={(
-            <span id="client-snackbar" className={classes.message}>
+          className={classes[variant]}
+          message={
+            <span className={classes.message} id="client-snackbar">
               <Icon className={classNames(classes.icon, classes.iconVariant)} />
               {message}
             </span>
-)}
+          }
         />
       </Snackbar>
     </RootRef>
