@@ -11,7 +11,7 @@ const SnackItem = props => {
     onClose,
     onExited,
     onSetSnackHeight,
-    options: { autoHideDuration },
+    options: { anchorOrigin, autoHideDuration },
     snack: { key, message, open, variant = 'info' },
   } = props;
   const classes = useSnackItemStyles();
@@ -37,10 +37,7 @@ const SnackItem = props => {
   return (
     <RootRef rootRef={ref}>
       <Snackbar
-        anchorOrigin={{
-          horizontal: 'left',
-          vertical: 'bottom',
-        }}
+        anchorOrigin={anchorOrigin}
         autoHideDuration={autoHideDuration}
         open={open}
         style={{
@@ -74,7 +71,13 @@ SnackItem.propTypes = {
     variant: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
     open: PropTypes.bool.isRequired,
   }),
-  options: PropTypes.shape({ autoHideDuration: PropTypes.number }),
+  options: PropTypes.shape({
+    anchorOrigin: PropTypes.shape({
+      horizontal: PropTypes.oneOf(['left', 'center', 'right']).isRequired,
+      vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
+    }),
+    autoHideDuration: PropTypes.number,
+  }),
   offset: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,
   onExited: PropTypes.func.isRequired,

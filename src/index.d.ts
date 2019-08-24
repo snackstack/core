@@ -1,5 +1,5 @@
 import { ComponentType, ReactNode, ComponentClass } from 'react';
-import { SnackbarProps } from '@material-ui/core/Snackbar';
+import { SnackbarProps, SnackbarOrigin } from '@material-ui/core/Snackbar';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
@@ -14,6 +14,7 @@ export interface Snack {
 export interface SnackOptions {
   maxSnacks?: number;
   autoHideDuration?: number;
+  anchorOrigin: SnackbarOrigin;
 }
 
 export interface SnackProviderProps {

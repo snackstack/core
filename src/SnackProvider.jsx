@@ -28,7 +28,9 @@ class SnackProvider extends Component {
     for (let i = 0; i < index; i += 1) {
       if (i === index) break;
 
-      const height = snacks[i].height || 52;
+      const { height: snackHeight } = snacks[i];
+
+      const height = snackHeight || 52;
 
       offset += height + spacing;
     }
@@ -156,6 +158,10 @@ SnackProvider.propTypes = {
   options: PropTypes.shape({
     maxSnacks: PropTypes.number,
     autoHideDuration: PropTypes.number,
+    anchorOrigin: PropTypes.shape({
+      horizontal: PropTypes.oneOf(['left', 'center', 'right']).isRequired,
+      vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
+    }),
   }),
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func,
@@ -166,6 +172,10 @@ SnackProvider.defaultProps = {
   options: {
     maxSnacks: 3,
     autoHideDuration: 2500,
+    anchorOrigin: {
+      horizontal: 'left',
+      vertical: 'bottom',
+    },
   },
 };
 
