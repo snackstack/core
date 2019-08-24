@@ -18,7 +18,13 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["react", "react-hooks", "prettier", "sort-destructure-keys"],
+  "plugins": [
+    "react",
+    "react-hooks",
+    "prettier",
+    "sort-destructure-keys",
+    "@typescript-eslint"
+  ],
   "rules": {
     "react/jsx-no-bind": "off",
     "react/prop-types": "warn",
@@ -37,6 +43,13 @@
       }
     ]
   },
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "extends": "plugin:@typescript-eslint/recommended",
+      "rules": {}
+    }
+  ],
   "settings": {
     "react": {
       "pragma": "React",
@@ -44,7 +57,7 @@
     },
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx"]
+        "extensions": [".js", ".jsx", ".ts"]
       }
     }
   }

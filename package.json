@@ -24,7 +24,7 @@
   "scripts": {
     "build": "babel ./src -d ./build --copy-files",
     "prepublishOnly": "npm run build",
-    "lint": "eslint . --ext .js,.jsx",
+    "lint": "eslint . --ext .js,.jsx,.ts",
     "lint-fix": "npm run lint -- --fix"
   },
   "peerDependencies": {
@@ -44,6 +44,7 @@
     "@babel/preset-react": "^7.0.0",
     "@material-ui/core": "^4.0.0",
     "@types/react": "^16.9.2",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
     "babel-eslint": "^10.0.2",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.1.0",
