@@ -6,6 +6,7 @@ Easy-to-use extension of [Material-UI](https://github.com/mui-org/material-ui), 
 
 - [Installation](#installation)
 - [Getting started](#getting-started)
+- [Handling Notifications](#handling-notifications)
 - [Documentation](#documentation)
 
 ## Installation
@@ -26,11 +27,13 @@ ReactDOM.render(
   <SnackProvider>
     <App />
   </SnackProvider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 ```
 
 If you're using `MuiThemeProvider` make sure that you place the `SnackProvider` inside of it.
+
+## Handling Notifications
 
 ### withSnacks
 
@@ -40,13 +43,13 @@ The `withSnacks` HOC injects the `enqueueSnack` and `closeSnack` function into y
 import { withSnacks } from 'snackstack';
 
 class ExampleComponent extends React.Component {
-  onEnqueueClick = () => {
+  handleEnqueueClick = () => {
     const { enqueueSnack } = this.props;
 
     enqueueSnack({ message: 'Hello World', key: 'key123' });
   };
 
-  onCloseClick = () => {
+  handleCloseClick = () => {
     const { closeSnack } = this.props;
 
     closeSnack('key123');
@@ -55,8 +58,8 @@ class ExampleComponent extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.onEnqueueClick}>Enqueue</button>
-        <button onClick={this.onCloseClick}>Close</button>
+        <button onClick={this.handleEnqueueClick}>Enqueue</button>
+        <button onClick={this.handleCloseClick}>Close</button>
       </div>
     );
   }
@@ -75,18 +78,18 @@ import { useSnacks } from 'snackstack';
 const ExampleComponent = () => {
   const [enqueueSnack, closeSnack] = useSnacks();
 
-  const onEnqueueClick = () => {
+  const handleEnqueueClick = () => {
     enqueueSnack({ message: 'Hello World', key: 'key123' });
   };
 
-  const onCloseClick = () => {
+  const handleCloseClick = () => {
     closeSnack('key123');
   };
 
   return (
     <div>
-      <button onClick={onEnqueueClick}>Enqueue</button>
-      <button onClick={onCloseClick}>Close</button>
+      <button onClick={handleEnqueueClick}>Enqueue</button>
+      <button onClick={handleCloseClick}>Close</button>
     </div>
   );
 };
