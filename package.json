@@ -1,6 +1,6 @@
 {
   "name": "snackstack",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Easy-to-use extension of Material-UI, which allows the stacking of Snackbar notification messages.",
   "homepage": "https://github.com/tobias-tengler/snackstack#readme",
   "main": "build/index.js",
