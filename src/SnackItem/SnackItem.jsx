@@ -14,7 +14,8 @@ const SnackItem = props => {
     onSetSnackHeight,
     options: { anchorOrigin, autoHideDuration },
     snack: {
-      action: snackActioon,
+      action: snackAction,
+      content: snackContent,
       key,
       message,
       open,
@@ -46,7 +47,11 @@ const SnackItem = props => {
     onExited(key);
   };
 
-  let action = snackActioon;
+  let content = snackContent;
+  if (content !== undefined && typeof content === 'function')
+    content = content({ key, closeSnack: () => onClose(key), classes });
+
+  let action = snackAction;
   if (action !== undefined && typeof action === 'function')
     action = action({ key, closeSnack: () => onClose(key), classes });
 
@@ -63,17 +68,21 @@ const SnackItem = props => {
         onEnter={handleEnter}
         onExited={handleExited}
       >
-        <SnackbarContent
-          action={action}
-          aria-describedby="client-snackbar"
-          className={classes[variant]}
-          message={
-            <span className={classes.message} id="client-snackbar">
-              <Icon className={classNames(classes.icon, classes.iconVariant)} />
-              {message}
-            </span>
-          }
-        />
+        {content || (
+          <SnackbarContent
+            action={action}
+            aria-describedby="client-snackbar"
+            className={classes[variant]}
+            message={
+              <span className={classes.message} id="client-snackbar">
+                <Icon
+                  className={classNames(classes.icon, classes.iconVariant)}
+                />
+                {message}
+              </span>
+            }
+          />
+        )}
       </Snackbar>
     </RootRef>
   );
@@ -83,7 +92,7 @@ SnackItem.propTypes = {
   snack: PropTypes.shape({
     action: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+    message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     variant: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
     open: PropTypes.bool.isRequired,
     persist: PropTypes.bool.isRequired,

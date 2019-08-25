@@ -1,6 +1,5 @@
 import { ComponentType, ReactNode, ComponentClass } from 'react';
 import { SnackbarOrigin } from '@material-ui/core/Snackbar';
-import { SnackbarContentProps } from '@material-ui/core/SnackbarContent';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
@@ -9,9 +8,9 @@ export type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
 export type EnqueueSnackFunc = (snack: Snack) => Snack['key'] | null;
 export type CloseSnackFunc = (key: Snack['key']) => void;
 
-export interface SnackActionArgs {
+export interface SnackNodeArgs {
   key: Snack['key'];
-  classes: any;
+  classes: any; // todo type
   closeSnack: () => void;
 }
 
@@ -20,9 +19,8 @@ export interface Snack {
   variant?: SnackVariantType;
   message: string | ReactNode;
   persist?: boolean;
-  action?:
-    | SnackbarContentProps['action']
-    | ((args: SnackActionArgs) => ReactNode);
+  content?: ReactNode | ((args: SnackNodeArgs) => ReactNode);
+  action?: ReactNode | ((args: SnackNodeArgs) => ReactNode);
 }
 
 export interface SnackOptions {
