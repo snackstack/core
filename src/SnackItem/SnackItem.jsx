@@ -91,6 +91,7 @@ const SnackItem = props => {
 SnackItem.propTypes = {
   snack: PropTypes.shape({
     action: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    content: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     variant: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
