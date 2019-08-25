@@ -1,7 +1,17 @@
 import { ComponentType, ReactNode, ComponentClass } from 'react';
 import { SnackbarOrigin } from '@material-ui/core/Snackbar';
+import { ClassNameMap } from '@material-ui/styles/withStyles';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
+
+export type SnackItemClassKey =
+  | 'error'
+  | 'warning'
+  | 'info'
+  | 'success'
+  | 'icon'
+  | 'iconVariant'
+  | 'message';
 
 export type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
 
@@ -10,7 +20,7 @@ export type CloseSnackFunc = (key: Snack['key']) => void;
 
 export interface SnackNodeArgs {
   key: Snack['key'];
-  classes: any; // todo type
+  classes: ClassNameMap<SnackItemClassKey>;
   closeSnack: () => void;
 }
 

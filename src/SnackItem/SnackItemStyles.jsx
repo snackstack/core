@@ -1,6 +1,5 @@
 import React from 'react';
 import SvgIcon from '@material-ui/core/SvgIcon';
-import { makeStyles } from '@material-ui/core/styles';
 import { green, blue, amber, red } from '@material-ui/core/colors';
 
 const ErrorIcon = props => (
@@ -34,7 +33,7 @@ export const snackItemVariantIcons = {
   success: SuccessIcon,
 };
 
-export const useSnackItemStyles = makeStyles(theme => ({
+export const snackItemStyles = theme => ({
   error: {
     backgroundColor: red[600],
   },
@@ -60,4 +59,4 @@ export const useSnackItemStyles = makeStyles(theme => ({
     alignItems: 'center',
     color: '#fff',
   },
-}));
+});

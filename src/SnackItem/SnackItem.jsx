@@ -2,11 +2,13 @@ import React, { useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 import RootRef from '@material-ui/core/RootRef';
-import { snackItemVariantIcons, useSnackItemStyles } from './SnackItemStyles';
+import { snackItemVariantIcons, snackItemStyles } from './SnackItemStyles';
 import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 
 const SnackItem = props => {
   const {
+    classes,
     offset,
     onClose,
     onEnter,
@@ -23,7 +25,7 @@ const SnackItem = props => {
       variant = 'info',
     },
   } = props;
-  const classes = useSnackItemStyles();
+
   const Icon = snackItemVariantIcons[variant];
   const ref = useRef();
 
@@ -112,4 +114,4 @@ SnackItem.propTypes = {
   onSetSnackHeight: PropTypes.func.isRequired,
 };
 
-export default SnackItem;
+export default withStyles(snackItemStyles)(SnackItem);
