@@ -13,7 +13,14 @@ const SnackItem = props => {
     onExited,
     onSetSnackHeight,
     options: { anchorOrigin, autoHideDuration },
-    snack: { key, message, open, persist, variant = 'info' },
+    snack: {
+      action: snackActioon,
+      key,
+      message,
+      open,
+      persist,
+      variant = 'info',
+    },
   } = props;
   const classes = useSnackItemStyles();
   const Icon = snackItemVariantIcons[variant];
@@ -39,6 +46,10 @@ const SnackItem = props => {
     onExited(key);
   };
 
+  let action = snackActioon;
+  if (action !== undefined && typeof action === 'function')
+    action = action({ key, closeSnack: () => onClose(key), classes });
+
   return (
     <RootRef rootRef={ref}>
       <Snackbar
@@ -53,6 +64,7 @@ const SnackItem = props => {
         onExited={handleExited}
       >
         <SnackbarContent
+          action={action}
           aria-describedby="client-snackbar"
           className={classes[variant]}
           message={
@@ -69,10 +81,10 @@ const SnackItem = props => {
 
 SnackItem.propTypes = {
   snack: PropTypes.shape({
+    action: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
-    variant: PropTypes.oneOf(['error', 'warning', 'info', 'success'])
-      .isRequired,
+    variant: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
     open: PropTypes.bool.isRequired,
     persist: PropTypes.bool.isRequired,
   }).isRequired,

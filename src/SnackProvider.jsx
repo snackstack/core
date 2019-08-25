@@ -114,9 +114,13 @@ class SnackProvider extends Component {
     if (onExited) onExited(key);
   };
 
-  enqueueSnack = ({ key, message, persist, ...options }) => {
+  enqueueSnack = ({ action, key, message, persist, ...options }) => {
     const {
-      options: { persist: persistOption, preventDuplicates },
+      options: {
+        action: actionOption,
+        persist: persistOption,
+        preventDuplicates,
+      },
     } = this.props;
 
     if (preventDuplicates) {
@@ -133,6 +137,7 @@ class SnackProvider extends Component {
       key: key || new Date().getTime() + Math.random(),
       open: true,
       persist: persistOption || false,
+      action: action || actionOption,
     };
 
     if (persist !== undefined) snack.persist = persist;
@@ -182,6 +187,7 @@ SnackProvider.propTypes = {
     }),
     preventDuplicates: PropTypes.bool,
     persist: PropTypes.bool,
+    action: PropTypes.func,
   }),
   children: PropTypes.node.isRequired,
   onEnter: PropTypes.func,

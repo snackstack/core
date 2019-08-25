@@ -49,6 +49,7 @@ export const useSnackItemStyles = makeStyles(theme => ({
   },
   icon: {
     fontSize: 20,
+    color: '#fff',
   },
   iconVariant: {
     opacity: 0.9,
