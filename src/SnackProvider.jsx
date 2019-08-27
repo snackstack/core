@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SnackContext from './context/SnackContext';
 import SnackItem from './SnackItem/SnackItem';
+import Slide from '@material-ui/core/Slide';
 
 class SnackProvider extends Component {
   snackQueue = [];
@@ -41,9 +42,7 @@ class SnackProvider extends Component {
   dequeueOldestSnack = () => {
     if (this.snackQueue.length < 1) return;
 
-    const {
-      options: { maxSnacks },
-    } = this.props;
+    const { maxSnacks } = this.props;
 
     if (this.curSnacks >= maxSnacks) return;
 
@@ -78,21 +77,18 @@ class SnackProvider extends Component {
   };
 
   handleCloseSnack = (key, reason) => {
-    this.setState(
-      ({ snacks }) => ({
-        snacks: snacks.map(snack => {
-          if (snack.key === key) {
-            return {
-              ...snack,
-              open: false,
-            };
-          }
+    this.setState(({ snacks }) => ({
+      snacks: snacks.map(snack => {
+        if (snack.key === key) {
+          return {
+            ...snack,
+            open: false,
+          };
+        }
 
-          return snack;
-        }),
+        return snack;
       }),
-      () => setTimeout(this.dequeueOldestSnack, 500),
-    );
+    }));
 
     const { onClose } = this.props;
 
@@ -106,6 +102,7 @@ class SnackProvider extends Component {
       }),
       () => {
         this.curSnacks -= 1;
+        this.dequeueOldestSnack();
       },
     );
 
@@ -116,11 +113,9 @@ class SnackProvider extends Component {
 
   enqueueSnack = ({ action, key, message, persist, ...options }) => {
     const {
-      options: {
-        action: actionOption,
-        persist: persistOption,
-        preventDuplicates,
-      },
+      action: actionOption,
+      persist: persistOption,
+      preventDuplicates,
     } = this.props;
 
     if (preventDuplicates) {
@@ -154,7 +149,7 @@ class SnackProvider extends Component {
   };
 
   render() {
-    const { children, options } = this.props;
+    const { children, ...options } = this.props;
     const { context, snacks } = this.state;
 
     return (
@@ -178,17 +173,17 @@ class SnackProvider extends Component {
 }
 
 SnackProvider.propTypes = {
-  options: PropTypes.shape({
-    maxSnacks: PropTypes.number,
-    autoHideDuration: PropTypes.number,
-    anchorOrigin: PropTypes.shape({
-      horizontal: PropTypes.oneOf(['left', 'center', 'right']).isRequired,
-      vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
-    }),
-    preventDuplicates: PropTypes.bool,
-    persist: PropTypes.bool,
-    action: PropTypes.func,
+  maxSnacks: PropTypes.number,
+  autoHideDuration: PropTypes.number,
+  anchorOrigin: PropTypes.shape({
+    horizontal: PropTypes.oneOf(['left', 'center', 'right']).isRequired,
+    vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
   }),
+  preventDuplicates: PropTypes.bool,
+  persist: PropTypes.bool,
+  action: PropTypes.func,
+  TransitionComponent: PropTypes.node,
+  TransitionProps: PropTypes.object,
   children: PropTypes.node.isRequired,
   onEnter: PropTypes.func,
   onClose: PropTypes.func,
@@ -196,16 +191,15 @@ SnackProvider.propTypes = {
 };
 
 SnackProvider.defaultProps = {
-  options: {
-    maxSnacks: 3,
-    autoHideDuration: 2500,
-    anchorOrigin: {
-      horizontal: 'left',
-      vertical: 'bottom',
-    },
-    preventDuplicates: true,
-    persist: false,
+  maxSnacks: 3,
+  autoHideDuration: 2500,
+  anchorOrigin: {
+    horizontal: 'left',
+    vertical: 'bottom',
   },
+  preventDuplicates: true,
+  persist: false,
+  TransitionComponent: Slide,
 };
 
 export default SnackProvider;

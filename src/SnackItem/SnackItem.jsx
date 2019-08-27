@@ -6,6 +6,20 @@ import { snackItemVariantIcons, snackItemStyles } from './SnackItemStyles';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+const TransitionDirectionMap = {
+  top: 'down',
+  bottom: 'up',
+  left: 'right',
+  right: 'left',
+};
+
+function getTransitionDirection(anchorOrigin) {
+  if (anchorOrigin.horizontal !== 'center') {
+    return TransitionDirectionMap[anchorOrigin.horizontal];
+  }
+  return TransitionDirectionMap[anchorOrigin.vertical];
+}
+
 const SnackItem = props => {
   const {
     classes,
@@ -14,7 +28,12 @@ const SnackItem = props => {
     onEnter,
     onExited,
     onSetSnackHeight,
-    options: { anchorOrigin, autoHideDuration },
+    options: {
+      TransitionComponent,
+      TransitionProps,
+      anchorOrigin,
+      autoHideDuration,
+    },
     snack: {
       action: snackAction,
       content: snackContent,
@@ -66,6 +85,11 @@ const SnackItem = props => {
         style={{
           [anchorOrigin.vertical]: offset,
         }}
+        TransitionComponent={TransitionComponent}
+        TransitionProps={{
+          ...TransitionProps,
+          direction: getTransitionDirection(anchorOrigin),
+        }}
         onClose={handleClose}
         onEnter={handleEnter}
         onExited={handleExited}
@@ -91,6 +115,7 @@ const SnackItem = props => {
 };
 
 SnackItem.propTypes = {
+  classes: PropTypes.object,
   snack: PropTypes.shape({
     action: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     content: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
@@ -106,6 +131,8 @@ SnackItem.propTypes = {
       vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
     }),
     autoHideDuration: PropTypes.number,
+    TransitionComponent: PropTypes.node,
+    TransitionProps: PropTypes.object,
   }).isRequired,
   offset: PropTypes.number.isRequired,
   onEnter: PropTypes.func.isRequired,
