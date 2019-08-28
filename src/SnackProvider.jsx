@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import SnackContext from './context/SnackContext';
 import SnackItem from './SnackItem/SnackItem';
 import Slide from '@material-ui/core/Slide';
+import { getTransitionDelay } from './helpers';
 
 class SnackProvider extends Component {
   snackQueue = [];
@@ -102,7 +103,13 @@ class SnackProvider extends Component {
       }),
       () => {
         this.curSnacks -= 1;
-        this.dequeueOldestSnack();
+
+        const { TransitionProps } = this.props;
+
+        setTimeout(
+          () => this.dequeueOldestSnack(),
+          getTransitionDelay(TransitionProps),
+        );
       },
     );
 
@@ -182,7 +189,7 @@ SnackProvider.propTypes = {
   preventDuplicates: PropTypes.bool,
   persist: PropTypes.bool,
   action: PropTypes.func,
-  TransitionComponent: PropTypes.node,
+  TransitionComponent: PropTypes.elementType,
   TransitionProps: PropTypes.object,
   children: PropTypes.node.isRequired,
   onEnter: PropTypes.func,

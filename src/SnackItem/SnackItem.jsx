@@ -5,20 +5,7 @@ import RootRef from '@material-ui/core/RootRef';
 import { snackItemVariantIcons, snackItemStyles } from './SnackItemStyles';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-
-const TransitionDirectionMap = {
-  top: 'down',
-  bottom: 'up',
-  left: 'right',
-  right: 'left',
-};
-
-function getTransitionDirection(anchorOrigin) {
-  if (anchorOrigin.horizontal !== 'center') {
-    return TransitionDirectionMap[anchorOrigin.horizontal];
-  }
-  return TransitionDirectionMap[anchorOrigin.vertical];
-}
+import { getTransitionDirection, getTransitionDelay } from '../helpers';
 
 const SnackItem = props => {
   const {
@@ -76,6 +63,8 @@ const SnackItem = props => {
   if (action !== undefined && typeof action === 'function')
     action = action({ key, closeSnack: () => onClose(key), classes });
 
+  const transitionDelay = getTransitionDelay(TransitionProps);
+
   return (
     <RootRef rootRef={ref}>
       <Snackbar
@@ -84,6 +73,11 @@ const SnackItem = props => {
         open={open}
         style={{
           [anchorOrigin.vertical]: offset,
+          MozTransition: `all ${transitionDelay}ms`,
+          msTransition: `all ${transitionDelay}ms`,
+          OTransition: `all ${transitionDelay}ms`,
+          transition: `all ${transitionDelay}ms`,
+          WebKitTransition: `all ${transitionDelay}ms`,
         }}
         TransitionComponent={TransitionComponent}
         TransitionProps={{
@@ -131,7 +125,7 @@ SnackItem.propTypes = {
       vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
     }),
     autoHideDuration: PropTypes.number,
-    TransitionComponent: PropTypes.node,
+    TransitionComponent: PropTypes.elementType,
     TransitionProps: PropTypes.object,
   }).isRequired,
   offset: PropTypes.number.isRequired,
