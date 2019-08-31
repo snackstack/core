@@ -22,12 +22,15 @@ export const snackItemStyles = theme => ({
     backgroundColor: green[500],
   },
   icon: {
-    fontSize: 24,
     color: '#fff',
   },
   iconVariant: {
+    fontSize: 24,
     opacity: 0.9,
     marginRight: theme.spacing(1),
+  },
+  iconAction: {
+    fontSize: 20,
   },
   message: {
     fontSize: 16,

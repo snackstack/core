@@ -12,6 +12,7 @@ export type SnackItemClassKey =
   | 'success'
   | 'icon'
   | 'iconVariant'
+  | 'iconAction'
   | 'message';
 
 export type SnackVariantType = 'error' | 'warning' | 'info' | 'success';

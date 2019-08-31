@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import SnackContext from './context/SnackContext';
 import SnackItem from './SnackItem/SnackItem';
@@ -242,7 +243,7 @@ SnackProvider.defaultProps = {
   TransitionComponent: Slide,
   action: ({ classes, closeSnack }) => (
     <IconButton onClick={closeSnack}>
-      <CloseIcon className={classes.icon} />
+      <CloseIcon className={classNames(classes.icon, classes.iconAction)} />
     </IconButton>
   ),
 };
