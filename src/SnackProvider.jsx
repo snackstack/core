@@ -24,16 +24,18 @@ class SnackProvider extends Component {
   }
 
   getOffset(index) {
-    let offset = 20;
-    const spacing = 10;
     const { snacks } = this.state;
+    const { spacing } = this.props;
+
+    const defaultSnackHeight = 56;
+    let offset = 20;
 
     for (let i = 0; i < index; i += 1) {
       if (i === index) break;
 
       const { height: snackHeight } = snacks[i];
 
-      const height = snackHeight || 52;
+      const height = snackHeight || defaultSnackHeight;
 
       offset += height + spacing;
     }
@@ -212,6 +214,7 @@ class SnackProvider extends Component {
 }
 
 SnackProvider.propTypes = {
+  spacing: PropTypes.number,
   hideIcon: PropTypes.bool,
   maxSnacks: PropTypes.number,
   autoHideDuration: PropTypes.number,
@@ -231,6 +234,7 @@ SnackProvider.propTypes = {
 };
 
 SnackProvider.defaultProps = {
+  spacing: 12,
   hideIcon: false,
   maxSnacks: 3,
   autoHideDuration: 2500,
@@ -241,6 +245,7 @@ SnackProvider.defaultProps = {
   preventDuplicates: true,
   persist: false,
   TransitionComponent: Slide,
+  // eslint-disable-next-line react/display-name
   action: ({ classes, closeSnack }) => (
     <IconButton onClick={closeSnack}>
       <CloseIcon className={classNames(classes.icon, classes.iconAction)} />

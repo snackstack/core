@@ -40,6 +40,7 @@ export type OnCloseFuncType = (key: Snack['key'], reason: string) => void;
 export type OnExtitedFuncType = (key: Snack['key']) => void;
 
 export interface SnackProviderProps {
+  spacing?: number;
   hideIcon?: boolean;
   maxSnacks?: number;
   autoHideDuration?: number;
