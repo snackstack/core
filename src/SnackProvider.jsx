@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import SnackContext from './context/SnackContext';
 import SnackItem from './SnackItem/SnackItem';
 import Slide from '@material-ui/core/Slide';
+import IconButton from '@material-ui/core/IconButton';
+import { CloseIcon } from './constants';
 import { getTransitionDelay } from './helpers';
 
 class SnackProvider extends Component {
@@ -236,6 +238,11 @@ SnackProvider.defaultProps = {
   preventDuplicates: true,
   persist: false,
   TransitionComponent: Slide,
+  action: ({ classes, closeSnack }) => (
+    <IconButton onClick={closeSnack}>
+      <CloseIcon className={classes.icon} />
+    </IconButton>
+  ),
 };
 
 export default SnackProvider;
