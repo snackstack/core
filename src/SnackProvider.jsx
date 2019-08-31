@@ -211,6 +211,7 @@ class SnackProvider extends Component {
 }
 
 SnackProvider.propTypes = {
+  hideIcon: PropTypes.bool,
   maxSnacks: PropTypes.number,
   autoHideDuration: PropTypes.number,
   anchorOrigin: PropTypes.shape({
@@ -229,6 +230,7 @@ SnackProvider.propTypes = {
 };
 
 SnackProvider.defaultProps = {
+  hideIcon: false,
   maxSnacks: 3,
   autoHideDuration: 2500,
   anchorOrigin: {

@@ -20,6 +20,7 @@ const SnackItem = props => {
       TransitionProps,
       anchorOrigin,
       autoHideDuration,
+      hideIcon,
     },
     snack: {
       action: snackAction,
@@ -95,9 +96,11 @@ const SnackItem = props => {
             className={classes[variant]}
             message={
               <span className={classes.message} id="client-snackbar">
-                <Icon
-                  className={classNames(classes.icon, classes.iconVariant)}
-                />
+                {!hideIcon && (
+                  <Icon
+                    className={classNames(classes.icon, classes.iconVariant)}
+                  />
+                )}
                 {message}
               </span>
             }
@@ -120,6 +123,7 @@ SnackItem.propTypes = {
     persist: PropTypes.bool.isRequired,
   }).isRequired,
   options: PropTypes.shape({
+    hideIcon: PropTypes.bool,
     anchorOrigin: PropTypes.shape({
       horizontal: PropTypes.oneOf(['left', 'center', 'right']).isRequired,
       vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
