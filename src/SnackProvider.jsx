@@ -8,8 +8,6 @@ import { getTransitionDelay } from './helpers';
 class SnackProvider extends Component {
   snackQueue = [];
 
-  curSnacks = 0;
-
   constructor(props) {
     super(props);
 
@@ -40,20 +38,53 @@ class SnackProvider extends Component {
     return offset;
   }
 
+  dismissOldestSnack = allPersisted => {
+    let dismissed = false;
+
+    this.setState(({ snacks }) => ({
+      snacks: snacks
+        .filter(snack => snack.open)
+        .map(snack => {
+          if (!dismissed && (allPersisted || !snack.persist)) {
+            dismissed = true;
+
+            const { onClose } = this.props;
+
+            if (onClose) onClose(snack.key, 'newsnack');
+
+            return {
+              ...snack,
+              open: false,
+            };
+          }
+
+          return snack;
+        }),
+    }));
+  };
+
   dequeueOldestSnack = () => {
     if (this.snackQueue.length < 1) return;
 
     const { maxSnacks } = this.props;
+    const { snacks } = this.state;
 
-    if (this.curSnacks >= maxSnacks) return;
+    if (snacks.length >= maxSnacks) {
+      const persistedSnacks = snacks.reduce(
+        (acc, snack) => acc + (snack.open && snack.persist),
+        0,
+      );
 
-    const oldestSnack = this.snackQueue.shift();
+      const allPersisted = persistedSnacks === maxSnacks;
 
-    this.setState(({ snacks }) => ({
-      snacks: [...snacks, oldestSnack],
+      this.dismissOldestSnack(allPersisted);
+    }
+
+    const oldestQueueSnack = this.snackQueue.shift();
+
+    this.setState(({ snacks: oldSnacks }) => ({
+      snacks: [...oldSnacks, oldestQueueSnack],
     }));
-
-    this.curSnacks += 1;
   };
 
   handleSetSnackHeight = (key, height) => {
@@ -102,12 +133,10 @@ class SnackProvider extends Component {
         snacks: snacks.filter(snack => snack.key !== key),
       }),
       () => {
-        this.curSnacks -= 1;
-
         const { TransitionProps } = this.props;
 
         setTimeout(
-          () => this.dequeueOldestSnack(),
+          this.dequeueOldestSnack,
           getTransitionDelay(TransitionProps),
         );
       },
