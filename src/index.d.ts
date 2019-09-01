@@ -1,11 +1,15 @@
-import { ComponentType, ReactNode, ComponentClass } from 'react';
-import { SnackbarOrigin } from '@material-ui/core/Snackbar';
+import {
+  ComponentType,
+  ReactNode,
+  ComponentClass,
+  SyntheticEvent,
+} from 'react';
+import { SnackbarProps } from '@material-ui/core/Snackbar';
 import { ClassNameMap } from '@material-ui/styles/withStyles';
-import { TransitionProps } from '@material-ui/core/transitions/transition';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
-export type SnackItemClassKey =
+type SnackItemClassKey =
   | 'error'
   | 'warning'
   | 'info'
@@ -15,10 +19,26 @@ export type SnackItemClassKey =
   | 'iconAction'
   | 'message';
 
-export type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
+type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
 
-export type EnqueueSnackFunc = (snack: Snack) => Snack['key'] | null;
-export type CloseSnackFunc = (key: Snack['key']) => void;
+type SnackCloseReason = 'timeout' | 'clickaway' | 'manually' | 'newsnack';
+
+type FilteredSnackbarProps = Omit<
+  SnackbarProps,
+  | 'open'
+  | 'message'
+  | 'classes' // todo include to allow style customization
+  | 'ref'
+  | 'innerRef'
+  | 'onClose'
+  | 'onEnter'
+  | 'onEntered'
+  | 'onEntering'
+  | 'onExit'
+  | 'onExited'
+  | 'onExiting'
+  | keyof React.HTMLAttributes<HTMLDivElement>
+>;
 
 export interface SnackNodeArgs {
   key: Snack['key'];
@@ -35,26 +55,30 @@ export interface Snack {
   action?: ReactNode | ((args: SnackNodeArgs) => ReactNode);
 }
 
-export type OnEnterFuncType = (key: Snack['key']) => void;
-export type OnCloseFuncType = (key: Snack['key'], reason: string) => void;
-export type OnExtitedFuncType = (key: Snack['key']) => void;
-
-export interface SnackProviderProps {
+export interface SnackProviderProps extends FilteredSnackbarProps {
   spacing?: number;
   hideIcon?: boolean;
   maxSnacks?: number;
-  autoHideDuration?: number;
-  anchorOrigin?: SnackbarOrigin;
   preventDuplicates?: boolean;
   action?: Snack['action'];
-  transitionComponent: ComponentType<TransitionProps>;
-  transitionProps: TransitionProps;
-  onEnter?: OnEnterFuncType;
-  onClose?: OnCloseFuncType;
-  onExited?: OnCloseFuncType;
+  onClose?: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    event: SyntheticEvent<any>,
+    reason: SnackCloseReason,
+    key: Snack['key'],
+  ) => void;
+  onEnter?: (key: Snack['key']) => void;
+  onEntered?: (key: Snack['key']) => void;
+  onEntering?: (key: Snack['key']) => void;
+  onExit?: (key: Snack['key']) => void;
+  onExited?: (key: Snack['key']) => void;
+  onExiting?: (key: Snack['key']) => void;
 }
 
 export const SnackProvider: ComponentType<SnackProviderProps>;
+
+export type EnqueueSnackFunc = (snack: Snack) => Snack['key'] | null;
+export type CloseSnackFunc = (key: Snack['key']) => void;
 
 export interface WithSnacksProps {
   enqueueSnack: EnqueueSnackFunc;

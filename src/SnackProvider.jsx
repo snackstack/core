@@ -55,7 +55,7 @@ class SnackProvider extends Component {
 
             const { onClose } = this.props;
 
-            if (onClose) onClose(snack.key, 'newsnack');
+            if (onClose) onClose(null, 'newsnack', snack.key);
 
             return {
               ...snack,
@@ -92,7 +92,7 @@ class SnackProvider extends Component {
     }));
   };
 
-  handleSetSnackHeight = (key, height) => {
+  handleSnackChangeHeight = (key, height) => {
     this.setState(({ snacks }) => ({
       snacks: snacks.map(snack => {
         if (snack.key === key) {
@@ -107,13 +107,7 @@ class SnackProvider extends Component {
     }));
   };
 
-  handleEnterSnack = key => {
-    const { onEnter } = this.props;
-
-    if (onEnter) onEnter(key);
-  };
-
-  handleCloseSnack = (key, reason) => {
+  handleSnackClose = (event, reason, key) => {
     this.setState(({ snacks }) => ({
       snacks: snacks.map(snack => {
         if (snack.key === key) {
@@ -129,10 +123,34 @@ class SnackProvider extends Component {
 
     const { onClose } = this.props;
 
-    if (onClose) onClose(key, reason);
+    if (onClose) onClose(event, reason, key);
   };
 
-  handleExitedSnack = key => {
+  handleSnackEnter = key => {
+    const { onEnter } = this.props;
+
+    if (onEnter) onEnter(key);
+  };
+
+  handleSnackEntered = key => {
+    const { onEntered } = this.props;
+
+    if (onEntered) onEntered(key);
+  };
+
+  handleSnackEntering = key => {
+    const { onEntering } = this.props;
+
+    if (onEntering) onEntering(key);
+  };
+
+  handleSnackExit = key => {
+    const { onExit } = this.props;
+
+    if (onExit) onExit(key);
+  };
+
+  handleSnackExited = key => {
     this.setState(
       ({ snacks }) => ({
         snacks: snacks.filter(snack => snack.key !== key),
@@ -150,6 +168,12 @@ class SnackProvider extends Component {
     const { onExited } = this.props;
 
     if (onExited) onExited(key);
+  };
+
+  handleSnackExiting = key => {
+    const { onExiting } = this.props;
+
+    if (onExiting) onExiting(key);
   };
 
   enqueueSnack = ({ action, key, message, persist, ...options }) => {
@@ -186,11 +210,19 @@ class SnackProvider extends Component {
   };
 
   closeSnack = key => {
-    this.handleCloseSnack(key, null, null);
+    this.handleSnackClose(null, 'manually', key);
   };
 
   render() {
-    const { children, ...options } = this.props;
+    // todo find better suited method of not passing down unwanted props via otherProps
+    const {
+      action,
+      children,
+      maxSnacks,
+      persist,
+      preventDuplicates,
+      ...otherProps
+    } = this.props;
     const { context, snacks } = this.state;
 
     return (
@@ -198,14 +230,19 @@ class SnackProvider extends Component {
         {children}
         {snacks.map((snack, index) => (
           <SnackItem
+            {...otherProps}
+            closeSnack={this.closeSnack}
             key={snack.key}
             offset={this.getOffset(index)}
-            options={options}
             snack={snack}
-            onClose={this.handleCloseSnack}
-            onEnter={this.handleEnterSnack}
-            onExited={this.handleExitedSnack}
-            onSetSnackHeight={this.handleSetSnackHeight}
+            onChangeHeight={this.handleSnackChangeHeight}
+            onClose={this.handleSnackClose}
+            onEnter={this.handleSnackEnter}
+            onEntered={this.handleSnackEntered}
+            onEntering={this.handleSnackEntering}
+            onExit={this.handleSnackExit}
+            onExited={this.handleSnackExited}
+            onExiting={this.handleSnackExiting}
           />
         ))}
       </SnackContext.Provider>
@@ -227,10 +264,16 @@ SnackProvider.propTypes = {
   action: PropTypes.func,
   TransitionComponent: PropTypes.elementType,
   TransitionProps: PropTypes.object,
+  resumeHideDuration: PropTypes.number,
+  disableWindowBlurListener: PropTypes.bool,
   children: PropTypes.node.isRequired,
-  onEnter: PropTypes.func,
   onClose: PropTypes.func,
+  onEnter: PropTypes.func,
+  onEntered: PropTypes.func,
+  onEntering: PropTypes.func,
+  onExit: PropTypes.func,
   onExited: PropTypes.func,
+  onExiting: PropTypes.func,
 };
 
 SnackProvider.defaultProps = {
@@ -242,12 +285,13 @@ SnackProvider.defaultProps = {
     horizontal: 'left',
     vertical: 'bottom',
   },
-  preventDuplicates: true,
+  preventDuplicates: false,
   persist: false,
-  TransitionComponent: Slide,
-  // eslint-disable-next-line react/display-name
+  TransitionComponent: props => <Slide {...props} />,
+  // eslint-disable-next-line react/prop-types
   action: ({ classes, closeSnack }) => (
     <IconButton onClick={closeSnack}>
+      {/* eslint-disable-next-line react/prop-types */}
       <CloseIcon className={classNames(classes.icon, classes.iconAction)} />
     </IconButton>
   ),
