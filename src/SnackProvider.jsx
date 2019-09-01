@@ -7,6 +7,7 @@ import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
 import { CloseIcon } from './constants';
 import { getTransitionDelay } from './helpers';
+import { snackItemVariantIcons } from './SnackItem/SnackItemStyles';
 
 class SnackProvider extends Component {
   snackQueue = [];
@@ -216,14 +217,24 @@ class SnackProvider extends Component {
   render() {
     // todo find better suited method of not passing down unwanted props via otherProps
     const {
+      // eslint-disable-next-line no-unused-vars
       action,
       children,
+      iconVariants,
+      // eslint-disable-next-line no-unused-vars
       maxSnacks,
+      // eslint-disable-next-line no-unused-vars
       persist,
+      // eslint-disable-next-line no-unused-vars
       preventDuplicates,
       ...otherProps
     } = this.props;
     const { context, snacks } = this.state;
+
+    const overwrittenIconVariants = Object.assign(
+      snackItemVariantIcons,
+      iconVariants,
+    );
 
     return (
       <SnackContext.Provider value={context}>
@@ -232,6 +243,7 @@ class SnackProvider extends Component {
           <SnackItem
             {...otherProps}
             closeSnack={this.closeSnack}
+            iconVariants={overwrittenIconVariants}
             key={snack.key}
             offset={this.getOffset(index)}
             snack={snack}
@@ -254,6 +266,12 @@ SnackProvider.propTypes = {
   classes: PropTypes.object,
   spacing: PropTypes.number,
   hideIcon: PropTypes.bool,
+  iconVariants: PropTypes.shape({
+    error: PropTypes.any,
+    warning: PropTypes.any,
+    info: PropTypes.any,
+    success: PropTypes.any,
+  }),
   maxSnacks: PropTypes.number,
   autoHideDuration: PropTypes.number,
   anchorOrigin: PropTypes.shape({

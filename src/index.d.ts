@@ -57,6 +57,7 @@ export interface Snack {
 
 export interface SnackProviderProps extends FilteredSnackbarProps {
   classes?: Partial<ClassNameMap<SnackItemClassKey>>;
+  iconVariants?: Partial<Record<SnackVariantType, ReactNode>>;
   spacing?: number;
   hideIcon?: boolean;
   maxSnacks?: number;

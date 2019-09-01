@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-import { snackItemVariantIcons, snackItemStyles } from './SnackItemStyles';
+import { snackItemStyles } from './SnackItemStyles';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { getTransitionDirection, getTransitionDelay } from '../helpers';
@@ -14,6 +14,7 @@ const SnackItem = props => {
     classes,
     closeSnack,
     hideIcon,
+    iconVariants,
     offset,
     onChangeHeight,
     onClose,
@@ -35,7 +36,7 @@ const SnackItem = props => {
     ...otherProps
   } = props;
 
-  const Icon = snackItemVariantIcons[variant];
+  const Icon = iconVariants[variant];
   const ref = useRef();
 
   useEffect(() => {
@@ -138,6 +139,12 @@ SnackItem.propTypes = {
     vertical: PropTypes.oneOf(['top', 'bottom']).isRequired,
   }),
   autoHideDuration: PropTypes.number,
+  iconVariants: PropTypes.shape({
+    error: PropTypes.any.isRequired,
+    warning: PropTypes.any.isRequired,
+    info: PropTypes.any.isRequired,
+    success: PropTypes.any.isRequired,
+  }).isRequired,
   TransitionComponent: PropTypes.elementType,
   TransitionProps: PropTypes.object,
   offset: PropTypes.number.isRequired,
