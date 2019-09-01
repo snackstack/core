@@ -4,12 +4,12 @@ import {
   ComponentClass,
   SyntheticEvent,
 } from 'react';
-import { SnackbarProps } from '@material-ui/core/Snackbar';
+import { SnackbarProps, SnackbarClassKey } from '@material-ui/core/Snackbar';
 import { ClassNameMap } from '@material-ui/styles/withStyles';
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
-type SnackItemClassKey =
+export type SnackItemClassKey =
   | 'error'
   | 'warning'
   | 'info'
@@ -19,9 +19,13 @@ type SnackItemClassKey =
   | 'iconAction'
   | 'message';
 
-type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
+export type SnackVariantType = 'error' | 'warning' | 'info' | 'success';
 
-type SnackCloseReason = 'timeout' | 'clickaway' | 'manually' | 'newsnack';
+export type SnackCloseReason =
+  | 'timeout'
+  | 'clickaway'
+  | 'manually'
+  | 'newsnack';
 
 type FilteredSnackbarProps = Omit<
   SnackbarProps,
@@ -56,7 +60,7 @@ export interface Snack {
 }
 
 export interface SnackProviderProps extends FilteredSnackbarProps {
-  classes?: Partial<ClassNameMap<SnackItemClassKey>>;
+  classes?: Partial<ClassNameMap<SnackItemClassKey | SnackbarClassKey>>;
   iconVariants?: Partial<Record<SnackVariantType, ReactNode>>;
   spacing?: number;
   hideIcon?: boolean;

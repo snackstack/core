@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-import { snackItemStyles } from './SnackItemStyles';
+import { snackItemStyles, getSnackbarClasses } from './SnackItemStyles';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { getTransitionDirection, getTransitionDelay } from '../helpers';
@@ -78,6 +78,7 @@ const SnackItem = props => {
       {...otherProps}
       anchorOrigin={anchorOrigin}
       autoHideDuration={persist ? undefined : autoHideDuration}
+      classes={getSnackbarClasses(classes)}
       open={open}
       ref={ref}
       style={{

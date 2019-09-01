@@ -1,6 +1,16 @@
 import { green, blue, amber, red } from '@material-ui/core/colors';
 import { ErrorIcon, WarningIcon, InfoIcon, SuccessIcon } from './../constants';
 
+export const snackbarClasses = {
+  root: {},
+  anchorOriginTopCenter: {},
+  anchorOriginBottomCenter: {},
+  anchorOriginTopRight: {},
+  anchorOriginBottomRight: {},
+  anchorOriginTopLeft: {},
+  anchorOriginBottomLeft: {},
+};
+
 export const snackItemVariantIcons = {
   error: ErrorIcon,
   warning: WarningIcon,
@@ -9,6 +19,7 @@ export const snackItemVariantIcons = {
 };
 
 export const snackItemStyles = theme => ({
+  ...snackbarClasses,
   error: {
     backgroundColor: red[600],
   },
@@ -39,3 +50,14 @@ export const snackItemStyles = theme => ({
     color: '#fff',
   },
 });
+
+export const getSnackbarClasses = classes =>
+  Object.keys(classes)
+    .filter(key => snackbarClasses[key] !== undefined)
+    .reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: classes[key],
+      }),
+      {},
+    );
