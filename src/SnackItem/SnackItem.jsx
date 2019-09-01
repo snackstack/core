@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-import RootRef from '@material-ui/core/RootRef';
 import { snackItemVariantIcons, snackItemStyles } from './SnackItemStyles';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -74,51 +73,50 @@ const SnackItem = props => {
   const transitionDelay = getTransitionDelay(TransitionProps);
 
   return (
-    <RootRef rootRef={ref}>
-      <Snackbar
-        {...otherProps}
-        anchorOrigin={anchorOrigin}
-        autoHideDuration={persist ? undefined : autoHideDuration}
-        open={open}
-        style={{
-          [anchorOrigin.vertical]: offset,
-          MozTransition: `all ${transitionDelay}ms`,
-          msTransition: `all ${transitionDelay}ms`,
-          OTransition: `all ${transitionDelay}ms`,
-          transition: `all ${transitionDelay}ms`,
-          WebKitTransition: `all ${transitionDelay}ms`,
-        }}
-        TransitionProps={{
-          ...TransitionProps,
-          direction: getTransitionDirection(anchorOrigin),
-        }}
-        onClose={handleClose}
-        onEnter={handleEnter}
-        onEntered={handleEntered}
-        onEntering={handleEntering}
-        onExit={handleExit}
-        onExited={handleExited}
-        onExiting={handleExiting}
-      >
-        {content || (
-          <SnackbarContent
-            action={action}
-            aria-describedby="client-snackbar"
-            className={classes[variant]}
-            message={
-              <span className={classes.message} id="client-snackbar">
-                {!hideIcon && (
-                  <Icon
-                    className={classNames(classes.icon, classes.iconVariant)}
-                  />
-                )}
-                {message}
-              </span>
-            }
-          />
-        )}
-      </Snackbar>
-    </RootRef>
+    <Snackbar
+      {...otherProps}
+      anchorOrigin={anchorOrigin}
+      autoHideDuration={persist ? undefined : autoHideDuration}
+      open={open}
+      ref={ref}
+      style={{
+        [anchorOrigin.vertical]: offset,
+        MozTransition: `all ${transitionDelay}ms`,
+        msTransition: `all ${transitionDelay}ms`,
+        OTransition: `all ${transitionDelay}ms`,
+        transition: `all ${transitionDelay}ms`,
+        WebKitTransition: `all ${transitionDelay}ms`,
+      }}
+      TransitionProps={{
+        ...TransitionProps,
+        direction: getTransitionDirection(anchorOrigin),
+      }}
+      onClose={handleClose}
+      onEnter={handleEnter}
+      onEntered={handleEntered}
+      onEntering={handleEntering}
+      onExit={handleExit}
+      onExited={handleExited}
+      onExiting={handleExiting}
+    >
+      {content || (
+        <SnackbarContent
+          action={action}
+          aria-describedby="client-snackbar"
+          className={classes[variant]}
+          message={
+            <span className={classes.message} id="client-snackbar">
+              {!hideIcon && (
+                <Icon
+                  className={classNames(classes.icon, classes.iconVariant)}
+                />
+              )}
+              {message}
+            </span>
+          }
+        />
+      )}
+    </Snackbar>
   );
 };
 
@@ -129,10 +127,10 @@ SnackItem.propTypes = {
     action: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     content: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+    message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     variant: PropTypes.oneOf(['error', 'warning', 'info', 'success']),
     open: PropTypes.bool.isRequired,
-    persist: PropTypes.bool.isRequired,
+    persist: PropTypes.bool,
   }).isRequired,
   hideIcon: PropTypes.bool,
   anchorOrigin: PropTypes.shape({
