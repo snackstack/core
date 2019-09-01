@@ -61,7 +61,7 @@ const steps = {
     );
 
     if (shouldUpdate) {
-      execSyncWithErrors(`npm version ${versionArg} -m "Updated to %s"`);
+      execSyncWithErrors(`npm version ${versionArg} -m "Update to %s"`);
 
       steps.newVersion = getCurrentVersion();
     } else {
@@ -87,7 +87,7 @@ const steps = {
   },
   publish: async () => {
     const shouldPublish = await question(
-      `Do you want to publish v${steps.newVersion} to npm registry`,
+      `Do you want to publish v${steps.newVersion} to the npm registry`,
     );
 
     if (shouldPublish) {
