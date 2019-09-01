@@ -27,7 +27,7 @@ type FilteredSnackbarProps = Omit<
   SnackbarProps,
   | 'open'
   | 'message'
-  | 'classes' // todo include to allow style customization
+  | 'classes'
   | 'ref'
   | 'innerRef'
   | 'onClose'
@@ -56,6 +56,7 @@ export interface Snack {
 }
 
 export interface SnackProviderProps extends FilteredSnackbarProps {
+  classes?: Partial<ClassNameMap<SnackItemClassKey>>;
   spacing?: number;
   hideIcon?: boolean;
   maxSnacks?: number;

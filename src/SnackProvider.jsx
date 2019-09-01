@@ -251,6 +251,7 @@ class SnackProvider extends Component {
 }
 
 SnackProvider.propTypes = {
+  classes: PropTypes.object,
   spacing: PropTypes.number,
   hideIcon: PropTypes.bool,
   maxSnacks: PropTypes.number,

@@ -121,7 +121,7 @@ const SnackItem = props => {
 };
 
 SnackItem.propTypes = {
-  classes: PropTypes.object,
+  classes: PropTypes.object.isRequired,
   closeSnack: PropTypes.func.isRequired,
   snack: PropTypes.shape({
     action: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
