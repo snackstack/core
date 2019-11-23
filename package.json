@@ -24,7 +24,6 @@
   "scripts": {
     "build": "babel ./src -d ./build --copy-files",
     "prepublishOnly": "npm run build",
-    "release": "node release",
     "lint": "eslint . --ext .js,.jsx,.ts",
     "lint-fix": "npm run lint -- --fix"
   },
