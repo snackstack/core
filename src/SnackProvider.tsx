@@ -16,27 +16,30 @@ type OptionsType = Pick<SnackbarProps, 'anchorOrigin' | 'TransitionProps'> &
     TransitionComponent?(anchorOrigin: SnackbarOrigin): SnackbarProps['TransitionComponent'];
   };
 
-interface ComponentProps {
-  options: OptionsType;
-}
+interface ComponentProps extends OptionsType {}
 
 const SlideTransition: OptionsType['TransitionComponent'] = anchorOrigin => props => (
   <Slide {...props} direction={getTransitionDirection(anchorOrigin)} />
 );
 
-export const SnackProvider: FC<ComponentProps> = ({ options, ...props }) => {
+const defaultAnchorOrigin: OptionsType['anchorOrigin'] = {
+  horizontal: 'left',
+  vertical: 'bottom',
+};
+
+export const SnackProvider: FC<ComponentProps> = props => {
   // todo: this should be a call to getDefaultOptions
   const {
-    anchorOrigin = {
-      horizontal: 'left',
-      vertical: 'bottom',
-    },
+    anchorOrigin = defaultAnchorOrigin,
+    persist = false,
+    action,
+    autoHideDuration = 2500,
     maxSnacks = 3,
     spacing = 12,
     preventDuplicates = false,
     TransitionComponent = SlideTransition,
     TransitionProps,
-  } = options;
+  } = props;
 
   const store = useStore<SnackId, MergedSnack>(item => item.id);
 
@@ -87,12 +90,12 @@ export const SnackProvider: FC<ComponentProps> = ({ options, ...props }) => {
     }
 
     // todo: this should be a separate merge-utility
-    let autoHideDuration = snack.autoHideDuration;
+    let computedAutoHideDuration = snack.autoHideDuration;
 
-    if (snack.persist || (snack.persist == undefined && options.persist)) {
-      autoHideDuration = undefined;
-    } else if (autoHideDuration == undefined) {
-      autoHideDuration = options.autoHideDuration;
+    if (snack.persist || (snack.persist == undefined && persist)) {
+      computedAutoHideDuration = undefined;
+    } else if (computedAutoHideDuration == undefined) {
+      computedAutoHideDuration = autoHideDuration;
     }
 
     const mergedSnack: MergedSnack = {
@@ -102,7 +105,7 @@ export const SnackProvider: FC<ComponentProps> = ({ options, ...props }) => {
       message: snack.message,
       dynamicHeight: !!snack.dynamicHeight,
       autoHideDuration: autoHideDuration,
-      action: snack.action == undefined ? options.action : snack.action,
+      action: snack.action == undefined ? action : snack.action,
     };
 
     enque(mergedSnack);
