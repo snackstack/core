@@ -67,8 +67,10 @@ export const SnackProvider: FC<ComponentProps> = props => {
 
   const store = useStore<SnackId, MergedSnack>(item => item.id);
 
+  // todo: this is only checked on enqueue if there are multiple peristed items still in queue
+  //       they non persisted items will never show
   const handleFullQueue = (activeItemIds: SnackId[]) => {
-    const persistedSnacks = store.ids.reduce(
+    const persistedSnacks = activeItemIds.reduce(
       (acc: number, cur) => acc + (store.items[cur].autoHideDuration == undefined ? 1 : 0),
       0
     );
@@ -111,7 +113,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
       height: 48,
       message: snack.message,
       dynamicHeight: !!snack.dynamicHeight,
-      autoHideDuration: autoHideDuration,
+      autoHideDuration: computedAutoHideDuration,
       action: snack.action == undefined ? action : snack.action,
     };
 

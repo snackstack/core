@@ -9,7 +9,9 @@ const App = () => {
   const { enqueueSnack } = useSnacks();
 
   const handleEnqueue = () => {
-    enqueueSnack({ message: <div>Num: {++id}</div> });
+    ++id;
+
+    enqueueSnack({ message: <div>Num: {id}</div>, persist: id % 2 === 0 });
   };
 
   return <button onClick={handleEnqueue}>Enqueue</button>;
