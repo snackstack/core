@@ -2,7 +2,6 @@ import React, { FC, memo } from 'react';
 import { Snackbar, SnackbarContent, SnackbarProps } from '@material-ui/core';
 import { usePrevious } from './hooks/usePrevious';
 import { useHeightObserver } from './hooks/useHeightObserver';
-import { CloseReason } from './types/closeReason';
 import { MergedSnack } from './types/snack';
 import { defaultTransitionDelay } from './constants';
 
@@ -13,7 +12,7 @@ interface ComponentProps extends Pick<SnackbarProps, 'TransitionComponent' | 'Tr
   offset: number;
   enableAutoHide: boolean;
   onSetHeight(height: number): void;
-  onClose(reason: CloseReason): void;
+  onClose(): void;
   onExited(): void;
 }
 
@@ -31,7 +30,7 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
     // todo: we need to created a filtered ExposedSnack item here from 'snack'
     //       as to not leak implementation details to the user
 
-    action = action(snack, () => props.onClose('manually'));
+    action = action(snack, props.onClose);
   }
 
   const style: React.CSSProperties = {
@@ -47,6 +46,12 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
     style.transition = `all ${transitionDelay}ms`;
   }
 
+  const handleClose: SnackbarProps['onClose'] = (_, reason) => {
+    if (reason === 'clickaway') return;
+
+    props.onClose();
+  };
+
   return (
     <Snackbar
       ref={ref => setSnackRef(ref as HTMLElement)}
@@ -55,7 +60,7 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
       anchorOrigin={props.anchorOrigin}
       style={style}
       autoHideDuration={props.enableAutoHide ? snack.autoHideDuration : undefined}
-      onClose={(_, reason) => props.onClose(reason)}
+      onClose={handleClose}
       onExited={props.onExited}
       TransitionComponent={props.TransitionComponent}
       TransitionProps={props.TransitionProps}
