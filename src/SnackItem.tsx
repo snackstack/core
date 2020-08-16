@@ -1,6 +1,6 @@
 import React, { FC, memo, useMemo } from 'react';
 import { Snackbar, SnackbarContent, SnackbarProps } from '@material-ui/core';
-import { usePrevious, useHeightObserver } from './hooks';
+import { useHeightObserver, usePrevious } from './hooks';
 import { MergedSnack } from './types/snack';
 import { defaultTransitionDelay } from './constants';
 import { SnackProviderOptions } from './types/snackProviderOptions';
@@ -9,14 +9,13 @@ interface ComponentProps extends Pick<SnackProviderOptions, 'autoHideDuration' |
   index: number;
   snack: MergedSnack;
   offset: number;
-  onSetHeight(height: number): void;
-  onClose(): void;
-  onExited(): void;
+  onSetHeight(id: MergedSnack['id'], height: number): void;
+  onClose(id: MergedSnack['id']): void;
+  onExited(id: MergedSnack['id']): void;
 }
 
-// todo: this re-renders too often
 export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) => {
-  const setSnackRef = useHeightObserver(snack.dynamicHeight, props.onSetHeight);
+  const ref = useHeightObserver(snack.dynamicHeight, height => props.onSetHeight(snack.id, height));
   const previousOffset = usePrevious(props.offset);
 
   if (!snack) return null;
@@ -28,7 +27,7 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
     // todo: we need to created a filtered ExposedSnack item here from 'snack'
     //       as to not leak implementation details to the user
 
-    action = action(snack, props.onClose);
+    action = action(snack, () => props.onClose(snack.id));
   }
 
   const style: React.CSSProperties = {
@@ -47,21 +46,21 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
   const handleClose: SnackbarProps['onClose'] = (_, reason) => {
     if (reason === 'clickaway') return;
 
-    props.onClose();
+    props.onClose(snack.id);
   };
 
   const TransitionComponent = useMemo(() => props.TransitionComponent(snack.anchorOrigin), [snack.anchorOrigin]);
 
   return (
     <Snackbar
-      ref={ref => setSnackRef(ref as HTMLElement)}
+      ref={ref}
       key={snack.id}
       open={snack.open}
       anchorOrigin={snack.anchorOrigin}
       style={style}
       autoHideDuration={props.autoHideDuration}
       onClose={handleClose}
-      onExited={props.onExited}
+      onExited={() => props.onExited(snack.id)}
       TransitionComponent={TransitionComponent}
     >
       <SnackbarContent message={snack.message} action={action} />

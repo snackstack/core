@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import { SnackManager } from '../SnackManager';
 
 export function useManagerSubscription(manager: SnackManager) {
@@ -8,14 +8,17 @@ export function useManagerSubscription(manager: SnackManager) {
     manager.rerenderSubscribers = forceRender;
   }, [manager]);
 
-  return {
-    activeIds: manager.activeIds,
-    items: manager.items,
-    options: manager.options,
-    enqueue: manager.enqueue,
-    dequeue: manager.dequeue,
-    update: manager.update,
-    remove: manager.remove,
-    close: manager.close,
-  };
+  return useMemo(
+    () => ({
+      activeIds: manager.activeIds,
+      items: manager.items,
+      options: manager.options,
+      enqueue: manager.enqueue,
+      dequeue: manager.dequeue,
+      update: manager.update,
+      remove: manager.remove,
+      close: manager.close,
+    }),
+    [manager]
+  );
 }
