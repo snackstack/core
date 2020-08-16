@@ -3,11 +3,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SnackProvider, useSnacks } from '../.';
 
+let id = 0;
+
 const App = () => {
   const { enqueueSnack } = useSnacks();
 
   const handleEnqueue = () => {
-    enqueueSnack({ message: <div>Hello World!</div> });
+    enqueueSnack({ message: <div>Num: {++id}</div> });
   };
 
   return <button onClick={handleEnqueue}>Enqueue</button>;

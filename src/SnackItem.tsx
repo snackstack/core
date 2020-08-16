@@ -10,6 +10,7 @@ interface ComponentProps extends Pick<SnackbarProps, 'TransitionComponent' | 'Tr
   anchorOrigin: Exclude<SnackbarProps['anchorOrigin'], undefined>;
   snack: MergedSnack;
   offset: number;
+  enableAutoHide: boolean;
   onSetHeight(height: number): void;
   onClose(reason: CloseReason): void;
   onExited(): void;
@@ -51,8 +52,7 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
       open={snack.open}
       anchorOrigin={props.anchorOrigin}
       style={style}
-      // todo: this should only be enabled for the first non-persisted snack
-      autoHideDuration={snack.autoHideDuration}
+      autoHideDuration={props.enableAutoHide ? snack.autoHideDuration : undefined}
       onClose={(_, reason) => props.onClose(reason)}
       onExited={props.onExited}
       TransitionComponent={props.TransitionComponent}

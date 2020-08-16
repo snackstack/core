@@ -50,7 +50,7 @@
   },
   "module": "dist/snackstack.esm.js",
   "devDependencies": {
-    "@material-ui/core": "^4.0.0",
+    "@material-ui/core": "^4.11.0",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
