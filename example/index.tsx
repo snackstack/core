@@ -3,6 +3,17 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SnackProvider, useSnacks } from '../.';
 
+const Expandable = ({ id }) => {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <div style={{ height: open ? 200 : 30 }}>
+      <div>Num: {id}</div>
+      <button onClick={() => setOpen(prev => !prev)}>CHange Height</button>
+    </div>
+  );
+};
+
 let id = 0;
 
 const App = () => {
@@ -11,7 +22,7 @@ const App = () => {
   const handleEnqueue = () => {
     ++id;
 
-    enqueueSnack({ id, message: <div>Num: {id}</div>, persist: id % 2 === 0 });
+    enqueueSnack({ id, dynamicHeight: true, message: <Expandable id={id} />, persist: id % 2 === 0 });
   };
 
   const handleChangeOrigin = () => {
