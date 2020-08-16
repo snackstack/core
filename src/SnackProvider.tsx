@@ -4,7 +4,6 @@ import { SnackItem } from './SnackItem';
 import { useStore } from './hooks/useStore';
 import { useQueue } from './hooks/useQueue';
 import { MergedSnack, SnackId } from './types/snack';
-import { CloseReason } from './types/closeReason';
 import { SnackProviderOptions } from './types/snackProviderOptions';
 import { useOptions } from './hooks/useOptions';
 import { getOffset } from './helpers';
@@ -27,7 +26,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
     );
 
     if (persistedSnacks >= options.maxSnacks) {
-      handleClose(activeItemIds[0])('forced');
+      handleClose(activeItemIds[0])();
     }
   };
 
@@ -74,9 +73,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
   };
 
   const handleClose = useCallback(
-    (id: SnackId) => (reason: CloseReason) => {
-      if (reason === 'clickaway') return;
-
+    (id: SnackId) => () => {
       store.update(id, { open: false });
     },
     []
@@ -97,7 +94,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
   );
 
   const closeSnack: SnackContextType['closeSnack'] = id => {
-    handleClose(id)('manually');
+    handleClose(id)();
   };
 
   const MemoTransitionComponent = useMemo(() => options.TransitionComponent(options.anchorOrigin), [
