@@ -4,6 +4,7 @@ import { usePrevious } from './hooks/usePrevious';
 import { useHeightObserver } from './hooks/useHeightObserver';
 import { CloseReason } from './types/closeReason';
 import { MergedSnack } from './types/snack';
+import { defaultTransitionDelay } from './constants';
 
 interface ComponentProps extends Pick<SnackbarProps, 'TransitionComponent' | 'TransitionProps'> {
   index: number;
@@ -16,6 +17,7 @@ interface ComponentProps extends Pick<SnackbarProps, 'TransitionComponent' | 'Tr
   onExited(): void;
 }
 
+// todo: this re-renders too often
 export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) => {
   const setSnackRef = useHeightObserver(snack.dynamicHeight, props.onSetHeight);
   const previousOffset = usePrevious(props.offset);
@@ -38,7 +40,7 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
 
   if (props.offset <= previousOffset) {
     // todo: this should be configurable
-    const transitionDelay = 500;
+    const transitionDelay = defaultTransitionDelay;
 
     style.MozTransition = `all ${transitionDelay}ms`;
     style.msTransition = `all ${transitionDelay}ms`;
