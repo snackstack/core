@@ -31,5 +31,5 @@ export function useQueue<TId extends Id, TItem>(
     store.remove(id);
   };
 
-  return { enque: store.add, dequeue: dequeue, activeIds, remove };
+  return { enqueue: store.add, dequeue: dequeue, activeIds, remove };
 }

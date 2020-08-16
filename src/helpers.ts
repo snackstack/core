@@ -42,8 +42,6 @@ export function getOffset(
     if (!offsetMap[anchorString]) offsetMap[anchorString] = startOffset;
 
     offsetMap[anchorString] += snack.height + spacing;
-
-    console.log({ i, anchorString, offset: offsetMap[anchorString] });
   }
 
   return offsetMap[getOffsetMapString(item.anchorOrigin)];
