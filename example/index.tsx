@@ -6,19 +6,17 @@ import { SnackProvider, useSnacks } from '../.';
 let id = 0;
 
 const App = () => {
-  const { enqueueSnack, updateSnackOptions } = useSnacks();
+  const { enqueueSnack, updateProviderOptions } = useSnacks();
 
   const handleEnqueue = () => {
     ++id;
 
-    enqueueSnack({ message: <div>Num: {id}</div>, persist: id % 2 === 0 });
+    enqueueSnack({ id, message: <div>Num: {id}</div>, persist: id % 2 === 0 });
   };
 
   const handleChangeOrigin = () => {
-    updateSnackOptions({ anchorOrigin: { horizontal: 'right', vertical: 'bottom' } });
+    updateProviderOptions({ anchorOrigin: { horizontal: 'right', vertical: 'bottom' } });
   };
-
-  // console.log('render app', new Date().getTime());
 
   return (
     <div>
