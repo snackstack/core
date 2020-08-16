@@ -6,7 +6,7 @@ import { SnackProvider, useSnacks } from '../.';
 let id = 0;
 
 const App = () => {
-  const { enqueueSnack } = useSnacks();
+  const { enqueueSnack, updateSnackOptions } = useSnacks();
 
   const handleEnqueue = () => {
     ++id;
@@ -14,7 +14,18 @@ const App = () => {
     enqueueSnack({ message: <div>Num: {id}</div>, persist: id % 2 === 0 });
   };
 
-  return <button onClick={handleEnqueue}>Enqueue</button>;
+  const handleChangeOrigin = () => {
+    updateSnackOptions({ anchorOrigin: { horizontal: 'right', vertical: 'bottom' } });
+  };
+
+  // console.log('render app', new Date().getTime());
+
+  return (
+    <div>
+      <button onClick={handleEnqueue}>Enqueue</button>
+      <button onClick={handleChangeOrigin}>Change origin</button>
+    </div>
+  );
 };
 
 ReactDOM.render(

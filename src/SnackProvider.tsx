@@ -1,76 +1,35 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
-import { SnackContext, SnackContextType } from './contexts/SnackContext';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { SnackItem } from './SnackItem';
-import { useStore } from './hooks/useStore';
-import { useQueue } from './hooks/useQueue';
+import { useStore, useQueue } from './hooks';
 import { MergedSnack, SnackId } from './types/snack';
 import { SnackProviderOptions } from './types/snackProviderOptions';
-import { useOptions } from './hooks/useOptions';
-import { getOffset } from './helpers';
+import { getOptions as getDefaultOptions, getOffset } from './helpers';
+import { SnackContext, SnackContextType } from './SnackContext';
 
 interface ComponentProps {
-  options?: SnackProviderOptions;
+  options?: Partial<SnackProviderOptions>;
 }
 
 export const SnackProvider: FC<ComponentProps> = props => {
-  const options = useOptions(props.options);
+  const [options, setOptions] = useState<SnackProviderOptions>(getDefaultOptions(props.options));
 
   const store = useStore<SnackId, MergedSnack>(item => item.id);
 
   // todo: this is only checked on enqueue if there are multiple peristed items still in queue
   //       they non persisted items will never show
   const handleFullQueue = (activeItemIds: SnackId[]) => {
-    const persistedSnacks = activeItemIds.reduce(
-      (acc: number, cur) => acc + (store.items[cur].autoHideDuration == undefined ? 1 : 0),
-      0
-    );
+    const persistedSnacks = activeItemIds.reduce((acc: number, cur) => acc + (store.items[cur].persist ? 1 : 0), 0);
 
     if (persistedSnacks >= options.maxSnacks) {
       handleClose(activeItemIds[0])();
     }
   };
 
+  // todo: useQueue doesn't get an immediate update to store updates
   const { enque, dequeue, remove, activeIds } = useQueue(store, options.maxSnacks, handleFullQueue);
 
   // todo: dequeue should only happen after transition delay to prevent the notifications from overlapping
   useEffect(dequeue, [store.ids]);
-
-  const enqueueSnack: SnackContextType['enqueueSnack'] = snack => {
-    if (!snack || !snack.message) return null;
-
-    if (options.preventDuplicates) {
-      if (store.ids.some(id => store.items[id].message === snack.message)) return null;
-    }
-
-    if (snack.id && store.ids.some(id => id === snack.id)) {
-      console.warn('Snack with same id has already been enqued', { snack });
-
-      return null;
-    }
-
-    // todo: this should be a separate merge-utility
-    let computedAutoHideDuration = snack.autoHideDuration;
-
-    if (snack.persist || (snack.persist == undefined && options.persist)) {
-      computedAutoHideDuration = undefined;
-    } else if (computedAutoHideDuration == undefined) {
-      computedAutoHideDuration = options.autoHideDuration;
-    }
-
-    const mergedSnack: MergedSnack = {
-      id: snack.id ?? new Date().getTime() + Math.random(),
-      open: true,
-      height: 48,
-      message: snack.message,
-      dynamicHeight: !!snack.dynamicHeight,
-      autoHideDuration: computedAutoHideDuration,
-      action: snack.action == undefined ? options.action : snack.action,
-    };
-
-    enque(mergedSnack);
-
-    return mergedSnack.id;
-  };
 
   const handleClose = useCallback(
     (id: SnackId) => () => {
@@ -93,37 +52,65 @@ export const SnackProvider: FC<ComponentProps> = props => {
     []
   );
 
+  const enqueueSnack: SnackContextType['enqueueSnack'] = snack => {
+    if (!snack || !snack.message) return null;
+
+    if (options.preventDuplicates) {
+      if (store.ids.some(id => store.items[id].message === snack.message)) return null;
+    }
+
+    if (snack.id && store.ids.some(id => id === snack.id)) {
+      console.warn('Snack with same id has already been enqued', { snack });
+
+      return null;
+    }
+
+    // todo: this should be a separate merge-utility
+    const mergedSnack: MergedSnack = {
+      id: snack.id ?? new Date().getTime() + Math.random(),
+      open: true,
+      height: 48,
+      message: snack.message,
+      dynamicHeight: !!snack.dynamicHeight,
+      persist: snack.persist ?? options.persist,
+      anchorOrigin: snack.anchorOrigin ?? options.anchorOrigin,
+      action: snack.action,
+    };
+
+    enque(mergedSnack);
+
+    return mergedSnack.id;
+  };
+
   const closeSnack: SnackContextType['closeSnack'] = id => {
     handleClose(id)();
   };
 
-  const MemoTransitionComponent = useMemo(() => options.TransitionComponent(options.anchorOrigin), [
-    options.anchorOrigin,
-  ]);
+  const updateSnackOptions: SnackContextType['updateSnackOptions'] = properties => {
+    setOptions(prevOptions => ({ ...prevOptions, ...properties }));
+  };
 
   let enableAutoHide = true;
 
   return (
-    <SnackContext.Provider value={{ closeSnack, enqueueSnack, updateSnack: store.update }}>
+    <SnackContext.Provider value={{ closeSnack, enqueueSnack, updateSnack: store.update, updateSnackOptions }}>
       {props.children}
 
       {activeIds.map((id, index) => {
         const snack = store.items[id];
 
-        const offset = getOffset(index, activeIds, store.items, options.spacing);
+        const offset = getOffset(index, snack, activeIds, store.items, options.spacing);
 
-        if (index > 0 && store.items[activeIds[index - 1]]?.autoHideDuration != undefined) enableAutoHide = false;
+        if (enableAutoHide && index > 0 && store.items[activeIds[index - 1]]?.persist) enableAutoHide = false;
 
         return (
           <SnackItem
             index={index}
             key={snack.id}
-            anchorOrigin={options.anchorOrigin}
-            TransitionComponent={MemoTransitionComponent}
-            TransitionProps={options.TransitionProps}
             snack={snack}
             offset={offset}
-            enableAutoHide={enableAutoHide}
+            TransitionComponent={options.TransitionComponent}
+            autoHideDuration={enableAutoHide ? options.autoHideDuration : null}
             onClose={handleClose(id)}
             onExited={handleExited(id)}
             onSetHeight={handleSetHeight(id)}

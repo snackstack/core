@@ -1,6 +1,5 @@
 import React from 'react';
-import { Slide } from '@material-ui/core';
-import { getTransitionDirection } from './helpers';
+import { Slide, SlideProps, SnackbarOrigin } from '@material-ui/core';
 import { SnackProviderOptions } from './types/snackProviderOptions';
 
 export const defaultMaxSnacks = 3;
@@ -11,10 +10,28 @@ export const defaultAutoHideDuration = 2500;
 
 export const defaultTransitionDelay = 500;
 
+export const startOffset = 20;
+
+// todo: this is all Material-UI specific
 export const defaultAnchorOrigin: Exclude<SnackProviderOptions['anchorOrigin'], undefined> = {
   horizontal: 'left',
   vertical: 'bottom',
 };
+
+const TransitionDirectionMap: { [key: string]: SlideProps['direction'] } = {
+  top: 'down',
+  bottom: 'up',
+  left: 'right',
+  right: 'left',
+};
+
+export function getTransitionDirection(anchorOrigin: SnackbarOrigin) {
+  if (anchorOrigin.horizontal !== 'center') {
+    return TransitionDirectionMap[anchorOrigin.horizontal];
+  }
+
+  return TransitionDirectionMap[anchorOrigin.vertical];
+}
 
 export const DefaultTransitionComponent: Exclude<
   SnackProviderOptions['TransitionComponent'],

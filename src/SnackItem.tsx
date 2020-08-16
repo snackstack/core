@@ -1,16 +1,14 @@
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import { Snackbar, SnackbarContent, SnackbarProps } from '@material-ui/core';
-import { usePrevious } from './hooks/usePrevious';
-import { useHeightObserver } from './hooks/useHeightObserver';
+import { usePrevious, useHeightObserver } from './hooks';
 import { MergedSnack } from './types/snack';
 import { defaultTransitionDelay } from './constants';
+import { SnackProviderOptions } from './types/snackProviderOptions';
 
-interface ComponentProps extends Pick<SnackbarProps, 'TransitionComponent' | 'TransitionProps'> {
+interface ComponentProps extends Pick<SnackProviderOptions, 'autoHideDuration' | 'TransitionComponent'> {
   index: number;
-  anchorOrigin: Exclude<SnackbarProps['anchorOrigin'], undefined>;
   snack: MergedSnack;
   offset: number;
-  enableAutoHide: boolean;
   onSetHeight(height: number): void;
   onClose(): void;
   onExited(): void;
@@ -34,7 +32,7 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
   }
 
   const style: React.CSSProperties = {
-    [props.anchorOrigin.vertical]: props.offset,
+    [snack.anchorOrigin.vertical]: props.offset,
   };
 
   if (props.offset <= previousOffset) {
@@ -52,18 +50,19 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
     props.onClose();
   };
 
+  const TransitionComponent = useMemo(() => props.TransitionComponent(snack.anchorOrigin), [snack.anchorOrigin]);
+
   return (
     <Snackbar
       ref={ref => setSnackRef(ref as HTMLElement)}
       key={snack.id}
       open={snack.open}
-      anchorOrigin={props.anchorOrigin}
+      anchorOrigin={snack.anchorOrigin}
       style={style}
-      autoHideDuration={props.enableAutoHide ? snack.autoHideDuration : undefined}
+      autoHideDuration={props.autoHideDuration}
       onClose={handleClose}
       onExited={props.onExited}
-      TransitionComponent={props.TransitionComponent}
-      TransitionProps={props.TransitionProps}
+      TransitionComponent={TransitionComponent}
     >
       <SnackbarContent message={snack.message} action={action} />
     </Snackbar>

@@ -1,7 +1,7 @@
 import { useContext, useDebugValue } from 'react';
-import { SnackContext, SnackContextType } from '../contexts/SnackContext';
+import { SnackContext } from '../SnackContext';
 
-export function useSnacks(): SnackContextType {
+export function useSnacks() {
   const context = useContext(SnackContext);
 
   useDebugValue('useSnacks');

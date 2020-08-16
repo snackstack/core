@@ -1,6 +1,6 @@
 import React, { ComponentType, forwardRef } from 'react';
-import { SnackContext, SnackContextType } from '../contexts/SnackContext';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { SnackContext, SnackContextType } from '../SnackContext';
 
 type WithSnacksProps = SnackContextType;
 

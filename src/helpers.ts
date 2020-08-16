@@ -1,31 +1,33 @@
-import { SlideProps, SnackbarOrigin } from '@material-ui/core';
+import {
+  defaultAnchorOrigin,
+  defaultAutoHideDuration,
+  defaultMaxSnacks,
+  defaultSpacing,
+  DefaultTransitionComponent,
+  startOffset,
+} from './constants';
 import { KeyedItems } from './hooks/useStore';
 import { MergedSnack, SnackId } from './types/snack';
+import { SnackProviderOptions } from './types/snackProviderOptions';
 
-const TransitionDirectionMap: { [key: string]: SlideProps['direction'] } = {
-  top: 'down',
-  bottom: 'up',
-  left: 'right',
-  right: 'left',
-};
+type OffsetMap = { [anchor: string]: number };
 
-export function getTransitionDirection(anchorOrigin: SnackbarOrigin) {
-  if (anchorOrigin.horizontal !== 'center') {
-    return TransitionDirectionMap[anchorOrigin.horizontal];
-  }
-
-  return TransitionDirectionMap[anchorOrigin.vertical];
+function getOffsetMapString(anchorOrigin: SnackProviderOptions['anchorOrigin']) {
+  return anchorOrigin.horizontal + anchorOrigin.vertical;
 }
 
-export function getOffset(index: number, ids: SnackId[], items: KeyedItems<SnackId, MergedSnack>, spacing: number) {
-  // todo: this start-bound should be configurable
-  let offset = 20;
+export function getOffset(
+  index: number,
+  item: MergedSnack,
+  ids: SnackId[],
+  items: KeyedItems<SnackId, MergedSnack>,
+  spacing: number
+) {
+  const offsetMap: OffsetMap = {};
 
-  if (index === 0) return offset;
+  if (index === 0) return startOffset;
 
   for (let i = 0; i < index; i++) {
-    if (i === index) break;
-
     const snackId = ids[i];
     const snack = items[snackId];
 
@@ -35,8 +37,26 @@ export function getOffset(index: number, ids: SnackId[], items: KeyedItems<Snack
       continue;
     }
 
-    offset += snack.height + spacing;
+    const anchorString = getOffsetMapString(snack.anchorOrigin);
+
+    if (!offsetMap[anchorString]) offsetMap[anchorString] = startOffset;
+
+    offsetMap[anchorString] += snack.height + spacing;
+
+    console.log({ i, anchorString, offset: offsetMap[anchorString] });
   }
 
-  return offset;
+  return offsetMap[getOffsetMapString(item.anchorOrigin)];
+}
+
+export function getOptions(options?: Partial<SnackProviderOptions>): SnackProviderOptions {
+  return {
+    maxSnacks: options?.maxSnacks ?? defaultMaxSnacks,
+    persist: options?.persist ?? false,
+    autoHideDuration: options?.autoHideDuration ?? defaultAutoHideDuration,
+    preventDuplicates: options?.preventDuplicates ?? false,
+    spacing: options?.spacing ?? defaultSpacing,
+    anchorOrigin: options?.anchorOrigin ?? defaultAnchorOrigin,
+    TransitionComponent: options?.TransitionComponent ?? DefaultTransitionComponent,
+  };
 }
