@@ -6,7 +6,7 @@ import {
   DefaultTransitionComponent,
   startOffset,
 } from './constants';
-import { KeyedItems } from './hooks/useStore';
+import { KeyedSnacks } from './SnackManager';
 import { MergedSnack, SnackId } from './types/snack';
 import { SnackProviderOptions } from './types/snackProviderOptions';
 
@@ -16,13 +16,7 @@ function getOffsetMapString(anchorOrigin: SnackProviderOptions['anchorOrigin']) 
   return anchorOrigin.horizontal + anchorOrigin.vertical;
 }
 
-export function getOffset(
-  index: number,
-  item: MergedSnack,
-  ids: SnackId[],
-  items: KeyedItems<SnackId, MergedSnack>,
-  spacing: number
-) {
+export function getOffset(index: number, item: MergedSnack, ids: SnackId[], items: KeyedSnacks, spacing: number) {
   const offsetMap: OffsetMap = {};
 
   if (index === 0) return startOffset;
@@ -47,7 +41,7 @@ export function getOffset(
   return offsetMap[getOffsetMapString(item.anchorOrigin)];
 }
 
-export function getOptions(options?: Partial<SnackProviderOptions>): SnackProviderOptions {
+export function getDefaultOptions(options?: Partial<SnackProviderOptions>): SnackProviderOptions {
   return {
     maxSnacks: options?.maxSnacks ?? defaultMaxSnacks,
     persist: options?.persist ?? false,

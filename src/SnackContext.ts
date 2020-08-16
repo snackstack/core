@@ -2,11 +2,16 @@ import { createContext } from 'react';
 import { MergedSnack, Snack } from './types/snack';
 import { SnackProviderOptions } from './types/snackProviderOptions';
 
+export type UpdateProviderOptionsArgs =
+  | Partial<SnackProviderOptions>
+  | ((options: SnackProviderOptions) => Partial<SnackProviderOptions>);
+
 export type SnackContextType = {
-  enqueueSnack(snack: Snack): MergedSnack['id'] | null;
+  enqueueSnack(snack: Snack | string): MergedSnack['id'] | null;
   closeSnack(id: MergedSnack['id']): void;
   updateSnack(id: MergedSnack['id'], properties: Omit<Partial<Snack>, 'id'>): void;
-  updateSnackOptions(properties: Partial<SnackProviderOptions>): void;
+  updateProviderOptions(properties: UpdateProviderOptionsArgs): void;
+  removeSnack(id: MergedSnack['id']): void;
 };
 
 const defaultContextValue: SnackContextType = {
@@ -19,8 +24,11 @@ const defaultContextValue: SnackContextType = {
   updateSnack: () => {
     throw new Error('updateSnack is not implemented');
   },
-  updateSnackOptions: () => {
+  updateProviderOptions: () => {
     throw new Error('updateSnackOptions is not implemented');
+  },
+  removeSnack: () => {
+    throw new Error('removeSnack is not implemented');
   },
 };
 
