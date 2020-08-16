@@ -25,3 +25,7 @@ const defaultContextValue: SnackContextType = {
 };
 
 export const SnackContext = createContext(defaultContextValue);
+
+if (process.env.NODE_ENV !== 'production') {
+  SnackContext.displayName = 'SnackContext';
+}

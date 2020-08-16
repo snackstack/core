@@ -26,7 +26,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
   };
 
   // todo: useQueue doesn't get an immediate update to store updates
-  const { enque, dequeue, remove, activeIds } = useQueue(store, options.maxSnacks, handleFullQueue);
+  const { enqueue, dequeue, remove, activeIds } = useQueue(store, options.maxSnacks, handleFullQueue);
 
   // todo: dequeue should only happen after transition delay to prevent the notifications from overlapping
   useEffect(dequeue, [store.ids]);
@@ -77,7 +77,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
       action: snack.action,
     };
 
-    enque(mergedSnack);
+    enqueue(mergedSnack);
 
     return mergedSnack.id;
   };
@@ -93,6 +93,8 @@ export const SnackProvider: FC<ComponentProps> = props => {
   let enableAutoHide = true;
 
   return (
+    // todo: this should not be a new object on every re-render or we cause the entire tree to re-render
+    //       --> think of new strategy to separate context and renderer
     <SnackContext.Provider value={{ closeSnack, enqueueSnack, updateSnack: store.update, updateSnackOptions }}>
       {props.children}
 
