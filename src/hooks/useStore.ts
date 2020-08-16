@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 export type Id = string | number;
 
-type KeyedItems<TId extends Id, TItem> = {
+export type KeyedItems<TId extends Id, TItem> = {
   [key in TId]: TItem;
 };
 
