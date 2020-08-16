@@ -1,69 +1,20 @@
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { SnackContext, SnackContextType } from './contexts/SnackContext';
 import { SnackItem } from './SnackItem';
-import { KeyedItems, useStore } from './hooks/useStore';
+import { useStore } from './hooks/useStore';
 import { useQueue } from './hooks/useQueue';
-import { Slide, SnackbarOrigin, SnackbarProps } from '@material-ui/core';
-import { getTransitionDirection } from './helpers';
-import { MergedSnack, Snack, SnackId } from './types/snack';
+import { MergedSnack, SnackId } from './types/snack';
 import { CloseReason } from './types/closeReason';
+import { SnackProviderOptions } from './types/snackProviderOptions';
+import { useOptions } from './hooks/useOptions';
+import { getOffset } from './helpers';
 
-type OptionsType = Pick<SnackbarProps, 'anchorOrigin' | 'TransitionProps'> &
-  Pick<Snack, 'action' | 'autoHideDuration' | 'persist'> & {
-    maxSnacks?: number;
-    spacing?: number;
-    preventDuplicates?: boolean;
-    TransitionComponent?(anchorOrigin: SnackbarOrigin): SnackbarProps['TransitionComponent'];
-  };
-
-interface ComponentProps extends OptionsType {}
-
-const SlideTransition: OptionsType['TransitionComponent'] = anchorOrigin => props => (
-  <Slide {...props} direction={getTransitionDirection(anchorOrigin)} />
-);
-
-function getOffset(index: number, ids: SnackId[], items: KeyedItems<SnackId, MergedSnack>, spacing: number) {
-  // todo: this start-bound should be configurable
-  let offset = 20;
-
-  if (index === 0) return offset;
-
-  for (let i = 0; i < index; i++) {
-    if (i === index) break;
-
-    const snackId = ids[i];
-    const snack = items[snackId];
-
-    if (!snack) {
-      console.warn(`Active Snack with id '${snackId}' could not be found`);
-
-      continue;
-    }
-
-    offset += snack.height + spacing;
-  }
-
-  return offset;
+interface ComponentProps {
+  options?: SnackProviderOptions;
 }
 
-const defaultAnchorOrigin: OptionsType['anchorOrigin'] = {
-  horizontal: 'left',
-  vertical: 'bottom',
-};
-
 export const SnackProvider: FC<ComponentProps> = props => {
-  // todo: this should be a call to getDefaultOptions
-  const {
-    anchorOrigin = defaultAnchorOrigin,
-    persist = false,
-    action,
-    autoHideDuration = 2500,
-    maxSnacks = 3,
-    spacing = 12,
-    preventDuplicates = false,
-    TransitionComponent = SlideTransition,
-    TransitionProps,
-  } = props;
+  const options = useOptions(props.options);
 
   const store = useStore<SnackId, MergedSnack>(item => item.id);
 
@@ -75,12 +26,12 @@ export const SnackProvider: FC<ComponentProps> = props => {
       0
     );
 
-    if (persistedSnacks >= maxSnacks) {
+    if (persistedSnacks >= options.maxSnacks) {
       handleClose(activeItemIds[0])('forced');
     }
   };
 
-  const { enque, dequeue, remove, activeIds } = useQueue(store, maxSnacks, handleFullQueue);
+  const { enque, dequeue, remove, activeIds } = useQueue(store, options.maxSnacks, handleFullQueue);
 
   // todo: dequeue should only happen after transition delay to prevent the notifications from overlapping
   useEffect(dequeue, [store.ids]);
@@ -88,7 +39,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
   const enqueueSnack: SnackContextType['enqueueSnack'] = snack => {
     if (!snack || !snack.message) return null;
 
-    if (preventDuplicates) {
+    if (options.preventDuplicates) {
       if (store.ids.some(id => store.items[id].message === snack.message)) return null;
     }
 
@@ -101,10 +52,10 @@ export const SnackProvider: FC<ComponentProps> = props => {
     // todo: this should be a separate merge-utility
     let computedAutoHideDuration = snack.autoHideDuration;
 
-    if (snack.persist || (snack.persist == undefined && persist)) {
+    if (snack.persist || (snack.persist == undefined && options.persist)) {
       computedAutoHideDuration = undefined;
     } else if (computedAutoHideDuration == undefined) {
-      computedAutoHideDuration = autoHideDuration;
+      computedAutoHideDuration = options.autoHideDuration;
     }
 
     const mergedSnack: MergedSnack = {
@@ -114,7 +65,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
       message: snack.message,
       dynamicHeight: !!snack.dynamicHeight,
       autoHideDuration: computedAutoHideDuration,
-      action: snack.action == undefined ? action : snack.action,
+      action: snack.action == undefined ? options.action : snack.action,
     };
 
     enque(mergedSnack);
@@ -149,7 +100,9 @@ export const SnackProvider: FC<ComponentProps> = props => {
     handleClose(id)('manually');
   };
 
-  const MemoTransitionComponent = useMemo(() => TransitionComponent(anchorOrigin), [anchorOrigin]);
+  const MemoTransitionComponent = useMemo(() => options.TransitionComponent(options.anchorOrigin), [
+    options.anchorOrigin,
+  ]);
 
   let enableAutoHide = true;
 
@@ -160,7 +113,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
       {activeIds.map((id, index) => {
         const snack = store.items[id];
 
-        const offset = getOffset(index, activeIds, store.items, spacing);
+        const offset = getOffset(index, activeIds, store.items, options.spacing);
 
         if (index > 0 && store.items[activeIds[index - 1]]?.autoHideDuration != undefined) enableAutoHide = false;
 
@@ -168,9 +121,9 @@ export const SnackProvider: FC<ComponentProps> = props => {
           <SnackItem
             index={index}
             key={snack.id}
-            anchorOrigin={anchorOrigin}
+            anchorOrigin={options.anchorOrigin}
             TransitionComponent={MemoTransitionComponent}
-            TransitionProps={TransitionProps}
+            TransitionProps={options.TransitionProps}
             snack={snack}
             offset={offset}
             enableAutoHide={enableAutoHide}
