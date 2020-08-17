@@ -1,27 +1,20 @@
 import { SnackbarContentProps, SnackbarProps } from '@material-ui/core';
 import { SnackProviderOptions } from './snackProviderOptions';
 
-type SnackActionCallback = (snack: ExposedSnack, close: () => void) => SnackbarProps['action'];
+type SnackVariant = 'default' | 'success' | 'info' | 'warning' | 'error';
 
-// todo: this should support custom content that is rendered instead of the SnackbarContent
-export interface Snack extends Partial<Pick<SnackProviderOptions, 'anchorOrigin'>> {
-  id?: string | number;
-  persist?: boolean;
-  autoHideDuration?: SnackbarProps['autoHideDuration'];
-  dynamicHeight?: boolean;
-  message?: SnackbarContentProps['message'];
-  action?: SnackbarProps['action'] | SnackActionCallback;
-}
+type SnackAction = Exclude<SnackbarProps['action'], undefined>;
 
-export type SnackId = Exclude<Snack['id'], undefined>;
-
-export interface MergedSnack
-  extends Pick<Snack, 'action' | 'message'>,
-    Pick<SnackProviderOptions, 'persist' | 'anchorOrigin'> {
-  readonly id: SnackId;
+export interface Snack extends Pick<SnackProviderOptions, 'anchorOrigin' | 'persist'> {
+  readonly id: string | number;
+  dynamicHeight: boolean;
+  message: SnackbarContentProps['message'];
+  action?: SnackAction | ((snack: this, close: () => void) => SnackAction);
+  variant: SnackVariant;
   open: boolean;
   height: number;
-  dynamicHeight: Exclude<Snack['dynamicHeight'], undefined>;
 }
 
-export type ExposedSnack = Omit<MergedSnack, 'open' | 'height'>;
+export type SnackPayload = Partial<Omit<Snack, 'id' | 'height' | 'open'>> & {
+  id?: Snack['id'];
+};

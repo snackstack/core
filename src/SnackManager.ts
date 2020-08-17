@@ -1,15 +1,15 @@
 import { getDefaultOptions } from './helpers';
 import { UpdateProviderOptionsArgs } from './SnackContext';
-import { MergedSnack, Snack, SnackId } from './types/snack';
+import { Snack, SnackPayload } from './types/snack';
 import { SnackProviderOptions } from './types/snackProviderOptions';
 
-export type KeyedSnacks = { [key in SnackId]: MergedSnack };
+export type KeyedSnacks = { [key in Snack['id']]: Snack };
 
 export class SnackManager {
   options: SnackProviderOptions;
-  ids: SnackId[];
+  ids: Snack['id'][];
   items: KeyedSnacks;
-  activeIds: SnackId[];
+  activeIds: Snack['id'][];
 
   constructor(options?: Partial<SnackProviderOptions>) {
     this.options = getDefaultOptions(options);
@@ -26,38 +26,39 @@ export class SnackManager {
     this.updateOptions = this.updateOptions.bind(this);
   }
 
-  enqueue(input: Snack | string): SnackId | null {
-    if (!input) return null;
+  enqueue(payload: SnackPayload | string): Snack['id'] | null {
+    if (!payload) return null;
 
-    let inputSnack: Snack;
+    let partialSnack: SnackPayload;
 
-    if (typeof input === 'string') inputSnack = { message: input };
+    if (typeof payload === 'string') partialSnack = { message: payload };
     else {
-      if (!input.message) return null;
+      if (!payload.message) return null;
 
-      inputSnack = input;
+      partialSnack = payload;
     }
 
     if (this.options.preventDuplicates) {
-      if (this.ids.some(id => this.items[id].message === inputSnack.message)) return null;
+      if (this.ids.some(id => this.items[id].message === partialSnack.message)) return null;
     }
 
-    if (inputSnack.id && this.ids.some(id => id === inputSnack.id)) {
-      console.warn('Snack with same id has already been enqued', { snack: input });
+    if (partialSnack.id && this.ids.some(id => id === partialSnack.id)) {
+      console.warn('Snack with same id has already been enqued', { snack: payload });
 
       return null;
     }
 
     // todo: this should be a separate merge-utility
-    const snack: MergedSnack = {
-      id: inputSnack.id ?? new Date().getTime() + Math.random(),
+    const snack: Snack = {
+      id: partialSnack.id ?? new Date().getTime() + Math.random(),
       open: true,
       height: 48,
-      message: inputSnack.message,
-      dynamicHeight: !!inputSnack.dynamicHeight,
-      persist: inputSnack.persist ?? this.options.persist,
-      anchorOrigin: inputSnack.anchorOrigin ?? this.options.anchorOrigin,
-      action: inputSnack.action,
+      message: partialSnack.message,
+      dynamicHeight: !!partialSnack.dynamicHeight,
+      persist: partialSnack.persist ?? this.options.persist,
+      anchorOrigin: partialSnack.anchorOrigin ?? this.options.anchorOrigin,
+      action: partialSnack.action,
+      variant: partialSnack.variant ?? 'default',
     };
 
     this.items[snack.id] = snack;
@@ -92,7 +93,7 @@ export class SnackManager {
     this.notifySubscribers();
   }
 
-  update(id: SnackId, properties: Partial<MergedSnack>) {
+  update(id: Snack['id'], properties: Partial<Snack>) {
     if (!this.items[id]) return;
 
     this.items[id] = { ...this.items[id], ...properties };
@@ -100,7 +101,7 @@ export class SnackManager {
     this.notifySubscribers();
   }
 
-  remove(id: SnackId) {
+  remove(id: Snack['id']) {
     const activeIndex = this.ids.indexOf(id);
 
     if (activeIndex > -1) this.activeIds.splice(activeIndex, 1);
@@ -114,7 +115,7 @@ export class SnackManager {
     this.notifySubscribers();
   }
 
-  close(id: SnackId) {
+  close(id: Snack['id']) {
     if (!this.activeIds.some(i => i === id)) this.remove(id);
     else this.update(id, { open: false });
   }

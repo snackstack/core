@@ -1,6 +1,7 @@
 import React from 'react';
-import { Slide, SlideProps, SnackbarOrigin } from '@material-ui/core';
+import { Slide, SlideProps, SnackbarOrigin, SvgIcon } from '@material-ui/core';
 import { SnackProviderOptions } from './types/snackProviderOptions';
+import { ErrorIcon, InfoIcon, SuccessIcon, WarningIcon } from './icons';
 
 export const defaultMaxSnacks = 3;
 
@@ -37,3 +38,11 @@ export const DefaultTransitionComponent: Exclude<
   SnackProviderOptions['TransitionComponent'],
   undefined
 > = anchorOrigin => props => <Slide {...props} direction={getTransitionDirection(anchorOrigin)} />;
+
+export const VariantIcons: { [key: string]: typeof SvgIcon | null } = {
+  default: null,
+  success: SuccessIcon,
+  info: InfoIcon,
+  warning: WarningIcon,
+  error: ErrorIcon,
+};

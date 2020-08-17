@@ -7,7 +7,7 @@ import {
   startOffset,
 } from './constants';
 import { KeyedSnacks } from './SnackManager';
-import { MergedSnack, SnackId } from './types/snack';
+import { Snack } from './types/snack';
 import { SnackProviderOptions } from './types/snackProviderOptions';
 
 type OffsetMap = { [anchor: string]: number };
@@ -16,7 +16,7 @@ function getOffsetMapString(anchorOrigin: SnackProviderOptions['anchorOrigin']) 
   return anchorOrigin.horizontal + anchorOrigin.vertical;
 }
 
-export function getOffset(index: number, item: MergedSnack, ids: SnackId[], items: KeyedSnacks, spacing: number) {
+export function getOffset(index: number, item: Snack, ids: Snack['id'][], items: KeyedSnacks, spacing: number) {
   const offsetMap: OffsetMap = {};
 
   if (index === 0) return startOffset;
@@ -50,5 +50,6 @@ export function getDefaultOptions(options?: Partial<SnackProviderOptions>): Snac
     spacing: options?.spacing ?? defaultSpacing,
     anchorOrigin: options?.anchorOrigin ?? defaultAnchorOrigin,
     TransitionComponent: options?.TransitionComponent ?? DefaultTransitionComponent,
+    hideIcon: options?.hideIcon ?? false,
   };
 }
