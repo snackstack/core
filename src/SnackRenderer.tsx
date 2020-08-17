@@ -4,7 +4,7 @@ import { getOffset } from './helpers';
 import { useManagerSubscription } from './hooks/useManagerSubscription';
 import { SnackItem } from './SnackItem';
 import { SnackManager } from './SnackManager';
-import { MergedSnack } from './types/snack';
+import { Snack } from './types/snack';
 
 interface ComponentProps {
   manager: SnackManager;
@@ -13,10 +13,10 @@ interface ComponentProps {
 export const SnackRenderer: FC<ComponentProps> = ({ manager }) => {
   const { options, activeIds, items, dequeue, update, close, remove } = useManagerSubscription(manager);
 
-  const handleClose = useCallback((id: MergedSnack['id']) => close(id), [close]);
+  const handleClose = useCallback((id: Snack['id']) => close(id), [close]);
 
   const handleExited = useCallback(
-    (id: MergedSnack['id']) => {
+    (id: Snack['id']) => {
       remove(id);
 
       setTimeout(dequeue, defaultTransitionDelay);
@@ -24,7 +24,7 @@ export const SnackRenderer: FC<ComponentProps> = ({ manager }) => {
     [remove, dequeue]
   );
 
-  const handleSetHeight = useCallback((id: MergedSnack['id'], height: number) => update(id, { height }), [update]);
+  const handleSetHeight = useCallback((id: Snack['id'], height: number) => update(id, { height }), [update]);
 
   let enableAutoHide = true;
 
@@ -50,6 +50,7 @@ export const SnackRenderer: FC<ComponentProps> = ({ manager }) => {
             offset={offset}
             TransitionComponent={options.TransitionComponent}
             autoHideDuration={enableAutoHide && !snack.persist ? options.autoHideDuration : null}
+            hideIcon={options.hideIcon}
             onClose={handleClose}
             onExited={handleExited}
             onSetHeight={handleSetHeight}

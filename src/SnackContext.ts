@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { MergedSnack, Snack } from './types/snack';
+import { Snack, SnackPayload } from './types/snack';
 import { SnackProviderOptions } from './types/snackProviderOptions';
 
 export type UpdateProviderOptionsArgs =
@@ -7,11 +7,11 @@ export type UpdateProviderOptionsArgs =
   | ((options: SnackProviderOptions) => Partial<SnackProviderOptions>);
 
 export type SnackContextType = {
-  enqueueSnack(snack: Snack | string): MergedSnack['id'] | null;
-  closeSnack(id: MergedSnack['id']): void;
-  updateSnack(id: MergedSnack['id'], properties: Omit<Partial<Snack>, 'id'>): void;
+  enqueueSnack(snack: SnackPayload | string): Snack['id'] | null;
+  closeSnack(id: Snack['id']): void;
+  updateSnack(id: Snack['id'], properties: Omit<Partial<Snack>, 'id'>): void;
   updateProviderOptions(properties: UpdateProviderOptionsArgs): void;
-  removeSnack(id: MergedSnack['id']): void;
+  removeSnack(id: Snack['id']): void;
 };
 
 const defaultContextValue: SnackContextType = {
