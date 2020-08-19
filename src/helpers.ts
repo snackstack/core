@@ -1,25 +1,12 @@
-import {
-  defaultAnchorOrigin,
-  defaultAutoHideDuration,
-  defaultMaxSnacks,
-  defaultSpacing,
-  DefaultTransitionComponent,
-  startOffset,
-} from './constants';
+import { defaultAutoHideDuration, defaultMaxSnacks, defaultSpacing, startOffset } from './constants';
 import { KeyedSnacks } from './SnackManager';
-import { Snack } from './types/snack';
-import { SnackProviderOptions } from './types/snackProviderOptions';
+import { Snack } from './types/Snack';
+import { SnackProviderOptions } from './types/SnackProviderOptions';
 
-type OffsetMap = { [anchor: string]: number };
+export function getOffset(index: number, ids: Snack['id'][], items: KeyedSnacks, spacing: number) {
+  let offset = startOffset;
 
-function getOffsetMapString(anchorOrigin: SnackProviderOptions['anchorOrigin']) {
-  return anchorOrigin.horizontal + anchorOrigin.vertical;
-}
-
-export function getOffset(index: number, item: Snack, ids: Snack['id'][], items: KeyedSnacks, spacing: number) {
-  const offsetMap: OffsetMap = {};
-
-  if (index === 0) return startOffset;
+  if (index === 0) return offset;
 
   for (let i = 0; i < index; i++) {
     const snackId = ids[i];
@@ -31,14 +18,10 @@ export function getOffset(index: number, item: Snack, ids: Snack['id'][], items:
       continue;
     }
 
-    const anchorString = getOffsetMapString(snack.anchorOrigin);
-
-    if (!offsetMap[anchorString]) offsetMap[anchorString] = startOffset;
-
-    offsetMap[anchorString] += snack.height + spacing;
+    offset += snack.height + spacing;
   }
 
-  return offsetMap[getOffsetMapString(item.anchorOrigin)];
+  return offset;
 }
 
 export function getDefaultOptions(options?: Partial<SnackProviderOptions>): SnackProviderOptions {
@@ -48,8 +31,6 @@ export function getDefaultOptions(options?: Partial<SnackProviderOptions>): Snac
     autoHideDuration: options?.autoHideDuration ?? defaultAutoHideDuration,
     preventDuplicates: options?.preventDuplicates ?? false,
     spacing: options?.spacing ?? defaultSpacing,
-    anchorOrigin: options?.anchorOrigin ?? defaultAnchorOrigin,
-    TransitionComponent: options?.TransitionComponent ?? DefaultTransitionComponent,
     hideIcon: options?.hideIcon ?? false,
   };
 }

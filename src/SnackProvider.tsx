@@ -1,14 +1,17 @@
-import React, { FC, useMemo } from 'react';
-import { SnackProviderOptions } from './types/snackProviderOptions';
+import React, { ComponentType, PropsWithChildren, useMemo } from 'react';
+import { SnackProviderOptions } from './types/SnackProviderOptions';
 import { SnackContext, SnackContextType } from './SnackContext';
 import { SnackManager } from './SnackManager';
-import { SnackRenderer } from './SnackRenderer';
+import { SnackContainer } from './SnackContainer';
+import { SnackRendererProps } from './types/SnackRendererProps';
 
-interface ComponentProps {
+interface ComponentProps<C extends SnackRendererProps> {
   options?: Partial<SnackProviderOptions>;
+  renderer: ComponentType<C>;
+  rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
 }
 
-export const SnackProvider: FC<ComponentProps> = props => {
+export function SnackProvider<C extends SnackRendererProps>(props: PropsWithChildren<ComponentProps<C>>) {
   const manager = useMemo(() => new SnackManager(props.options), [props.options]);
 
   const contextValue = useMemo<SnackContextType>(
@@ -26,7 +29,7 @@ export const SnackProvider: FC<ComponentProps> = props => {
     <SnackContext.Provider value={contextValue}>
       {props.children}
 
-      <SnackRenderer manager={manager} />
+      <SnackContainer<C> manager={manager} renderer={props.renderer} rendererProps={props.rendererProps} />
     </SnackContext.Provider>
   );
-};
+}

@@ -1,17 +1,20 @@
-import React, { FC, useCallback } from 'react';
+import React, { ComponentType, useCallback } from 'react';
 import { defaultTransitionDelay } from './constants';
 import { getOffset } from './helpers';
 import { useManagerSubscription } from './hooks/useManagerSubscription';
 import { SnackItem } from './SnackItem';
 import { SnackManager } from './SnackManager';
-import { Snack } from './types/snack';
+import { Snack } from './types/Snack';
+import { SnackRendererProps } from './types/SnackRendererProps';
 
-interface ComponentProps {
+interface ComponentProps<C extends SnackRendererProps> {
   manager: SnackManager;
+  renderer: ComponentType<C>;
+  rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
 }
 
-export const SnackRenderer: FC<ComponentProps> = ({ manager }) => {
-  const { options, activeIds, items, dequeue, update, close, remove } = useManagerSubscription(manager);
+export function SnackContainer<C extends SnackRendererProps>(props: ComponentProps<C>) {
+  const { options, activeIds, items, dequeue, update, close, remove } = useManagerSubscription(props.manager);
 
   const handleClose = useCallback((id: Snack['id']) => close(id), [close]);
 
@@ -31,9 +34,7 @@ export const SnackRenderer: FC<ComponentProps> = ({ manager }) => {
   return (
     <>
       {activeIds.map((id, index) => {
-        const snack = items[id];
-
-        const offset = getOffset(index, snack, activeIds, items, options.spacing);
+        const offset = getOffset(index, activeIds, items, options.spacing);
 
         if (enableAutoHide && index > 0) {
           const previousId = activeIds[index - 1];
@@ -42,21 +43,24 @@ export const SnackRenderer: FC<ComponentProps> = ({ manager }) => {
           if (!previousItem.persist) enableAutoHide = false;
         }
 
+        const snack = items[id];
+
         return (
-          <SnackItem
-            index={index}
+          <SnackItem<C>
             key={snack.id}
-            snack={snack}
+            index={index}
             offset={offset}
-            TransitionComponent={options.TransitionComponent}
+            snack={snack}
             autoHideDuration={enableAutoHide && !snack.persist ? options.autoHideDuration : null}
             hideIcon={options.hideIcon}
             onClose={handleClose}
             onExited={handleExited}
             onSetHeight={handleSetHeight}
+            renderer={props.renderer}
+            rendererProps={props.rendererProps}
           />
         );
       })}
     </>
   );
-};
+}

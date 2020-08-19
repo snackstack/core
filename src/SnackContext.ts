@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { Snack, SnackPayload } from './types/snack';
-import { SnackProviderOptions } from './types/snackProviderOptions';
+import { Snack, SnackPayload } from './types/Snack';
+import { SnackProviderOptions } from './types/SnackProviderOptions';
 
 export type UpdateProviderOptionsArgs =
   | Partial<SnackProviderOptions>

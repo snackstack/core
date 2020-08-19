@@ -1,59 +1,19 @@
-import React, { FC, isValidElement, memo, useMemo } from 'react';
-import { createStyles, makeStyles, Snackbar, SnackbarContent, SnackbarProps } from '@material-ui/core';
+import React, { ComponentType } from 'react';
 import { useHeightObserver, usePrevious } from './hooks';
-import { defaultTransitionDelay, VariantIcons } from './constants';
-import { SnackProviderOptions } from './types/snackProviderOptions';
-import { Snack } from './types/snack';
-import { amber, blue, green, red } from '@material-ui/core/colors';
+import { Snack } from './types/Snack';
+import { SnackRendererProps } from './types/SnackRendererProps';
 
-const useStyles = makeStyles(theme =>
-  createStyles({
-    message: {
-      fontSize: 16,
-      display: 'flex',
-      alignItems: 'center',
-      color: '#fff',
-    },
-    icon: {
-      color: '#fff',
-      fontSize: 24,
-      opacity: 0.9,
-      marginRight: theme.spacing(1),
-    },
-    iconAction: {
-      fontSize: 20,
-    },
-    error: {
-      backgroundColor: red[600],
-    },
-    warning: {
-      backgroundColor: amber[800],
-    },
-    info: {
-      backgroundColor: blue[500],
-    },
-    success: {
-      backgroundColor: green[500],
-    },
-  })
-);
+type PickedSnackRendererProps = Omit<SnackRendererProps, 'snackRef' | 'previousOffset' | 'action'>;
 
-interface ComponentProps extends Pick<SnackProviderOptions, 'autoHideDuration' | 'TransitionComponent' | 'hideIcon'> {
-  index: number;
+interface ComponentProps<C extends SnackRendererProps> extends PickedSnackRendererProps {
   snack: Snack;
-  offset: number;
-  onSetHeight(id: Snack['id'], height: number): void;
-  onClose(id: Snack['id']): void;
-  onExited(id: Snack['id']): void;
+  renderer: ComponentType<C>;
+  rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
 }
 
-export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) => {
-  const ref = useHeightObserver(snack.dynamicHeight, height => props.onSetHeight(snack.id, height));
+function SnackItemComponent<C extends SnackRendererProps>({ snack, ...props }: ComponentProps<C>) {
+  const snackRef = useHeightObserver(snack.dynamicHeight, height => props.onSetHeight(snack.id, height));
   const previousOffset = usePrevious(props.offset);
-
-  const styles = useStyles();
-
-  if (!snack) return null;
 
   let action = snack.action;
   if (typeof action === 'function') {
@@ -63,57 +23,23 @@ export const SnackItem: FC<ComponentProps> = memo(({ index, snack, ...props }) =
     action = action(snack, () => props.onClose(snack.id));
   }
 
-  const style: React.CSSProperties = {
-    [snack.anchorOrigin.vertical]: props.offset,
-  };
-
-  if (props.offset <= previousOffset) {
-    // todo: this should be configurable
-    const transitionDelay = defaultTransitionDelay;
-
-    style.MozTransition = `all ${transitionDelay}ms`;
-    style.msTransition = `all ${transitionDelay}ms`;
-    style.transition = `all ${transitionDelay}ms`;
-  }
-
-  const handleClose: SnackbarProps['onClose'] = (_, reason) => {
-    if (reason === 'clickaway') return;
-
-    props.onClose(snack.id);
-  };
-
-  const TransitionComponent = useMemo(() => props.TransitionComponent(snack.anchorOrigin), [snack.anchorOrigin]);
-
-  const Icon = VariantIcons[snack.variant];
-
-  const content = isValidElement(snack.message) ? snack.message : null;
+  const Renderer = props.renderer as ComponentType<SnackRendererProps>;
 
   return (
-    /* @ts-ignore */
-    <Snackbar
-      ref={ref}
-      key={snack.id}
-      open={snack.open}
-      anchorOrigin={snack.anchorOrigin}
-      style={style}
+    <Renderer
+      index={props.index}
+      offset={props.offset}
+      previousOffset={previousOffset}
+      snack={snack}
+      snackRef={snackRef}
+      action={action}
       autoHideDuration={props.autoHideDuration}
-      onClose={handleClose}
-      onExited={() => props.onExited(snack.id)}
-      TransitionComponent={TransitionComponent}
-    >
-      {/* @ts-ignore */}
-      {content || (
-        <SnackbarContent
-          className={styles[snack.variant as keyof typeof useStyles]}
-          message={
-            <div className={styles['message']}>
-              {!props.hideIcon && Icon && <Icon className={styles.icon} />}
-              {snack.message}
-            </div>
-          }
-          action={action}
-        />
-      )}
-    </Snackbar>
+      hideIcon={props.hideIcon}
+      onClose={props.onClose}
+      onExited={props.onExited}
+      onSetHeight={props.onSetHeight}
+    />
   );
-});
+}
+
+export const SnackItem = React.memo(SnackItemComponent) as typeof SnackItemComponent;

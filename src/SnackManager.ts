@@ -1,7 +1,7 @@
 import { getDefaultOptions } from './helpers';
 import { UpdateProviderOptionsArgs } from './SnackContext';
-import { Snack, SnackPayload } from './types/snack';
-import { SnackProviderOptions } from './types/snackProviderOptions';
+import { Snack, SnackPayload } from './types/Snack';
+import { SnackProviderOptions } from './types/SnackProviderOptions';
 
 export type KeyedSnacks = { [key in Snack['id']]: Snack };
 
@@ -56,7 +56,6 @@ export class SnackManager {
       message: partialSnack.message,
       dynamicHeight: !!partialSnack.dynamicHeight,
       persist: partialSnack.persist ?? this.options.persist,
-      anchorOrigin: partialSnack.anchorOrigin ?? this.options.anchorOrigin,
       action: partialSnack.action,
       variant: partialSnack.variant ?? 'default',
     };
