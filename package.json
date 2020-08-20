@@ -1,8 +1,8 @@
 {
-  "name": "snackstack",
-  "version": "2.0.0-alpha.0",
-  "description": "Easy-to-use extension of Material-UI, which allows the stacking of Snackbar notification messages.",
-  "homepage": "https://github.com/tobias-tengler/snackstack#readme",
+  "name": "@snackstack/core",
+  "version": "2.0.0",
+  "description": "Notification management library",
+  "homepage": "https://github.com/snackstack/core#readme",
   "license": "MIT",
   "author": {
     "name": "Tobias Tengler",
@@ -11,17 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tobias-tengler/snackstack.git"
+    "url": "git+https://github.com/snackstack/core.git"
   },
   "bugs": {
-    "url": "https://github.com/tobias-tengler/snackstack/issues"
+    "url": "https://github.com/snackstack/core/issues"
   },
   "keywords": [
     "snackstack",
     "react",
     "reactjs",
-    "material-ui",
-    "material-design",
     "snackbar",
     "toast",
     "notifications",

@@ -18,10 +18,15 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: yarn install --frozen-lockfile
-        name: Install packages
       - run: yarn run build
-        name: Build
-      - run: yarn publish --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)" --tag experimental
-        name: Publish experimental npm package
+      - run: yarn publish --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)" --tag experimental --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://npm.pkg.github.com/
+          scope: '@snackstack'
+      - run: yarn publish --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)" --tag experimental
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
