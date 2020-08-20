@@ -1,0 +1,44 @@
+name: Experimental Publish
+
+on: 
+  push:
+    branches: master
+    paths-ignore: 
+      - '**/**.md'
+      - 'example/**'
+
+jobs:
+  experimental-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          registry-url: https://registry.npmjs.org/
+      - uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            nodeModules-
+      - run: yarn install --frozen-lockfile
+        env:
+          CI: true
+      - run: yarn lint
+        env:
+          CI: true
+      - run: yarn build
+        env:
+          CI: true
+      - run: yarn publish --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)" --tag experimental --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          registry-url: https://npm.pkg.github.com/
+          scope: '@snackstack'
+      - run: yarn publish --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)" --tag experimental
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

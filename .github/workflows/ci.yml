@@ -1,32 +1,32 @@
 name: CI
 
-on: 
+on:
   push:
-    branches: master
     paths-ignore: 
       - '**/**.md'
-      - '.github/**'
       - 'example/**'
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 12
-          registry-url: https://registry.npmjs.org/
+          node-version: 12.x
+      - uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            nodeModules-
       - run: yarn install --frozen-lockfile
-      - run: yarn run build
-      - run: yarn publish --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)" --tag experimental --access public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://npm.pkg.github.com/
-          scope: '@snackstack'
-      - run: yarn publish --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)" --tag experimental
+          CI: true
+      - run: yarn lint
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          CI: true
+      - run: yarn build
+        env:
+          CI: true
