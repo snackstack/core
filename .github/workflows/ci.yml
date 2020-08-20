@@ -9,24 +9,51 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: node_modules
-          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            nodeModules-
+          key: node_modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: node_modules-
       - run: yarn install --frozen-lockfile
-        env:
-          CI: true
       - run: yarn lint
-        env:
-          CI: true
       - run: yarn build
+      - uses: actions/upload-artifact@v2
+        if: contains(toJson(github.event.commits), '[experimental]') == true
+        with:
+          name: build-output
+          path: dist/
+  experimental-publish:
+    if: contains(toJson(github.event.commits), '[experimental]') == true
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-output
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          registry-url: https://registry.npmjs.org/
+      - run: yarn version --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)"
+      - run: yarn pack --filename package.tgz
+      - run: yarn publish package.tgz --tag experimental --access public
         env:
-          CI: true
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          registry-url: https://npm.pkg.github.com/
+          scope: '@snackstack'
+      - run: yarn publish package.tgz --tag experimental
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: experimental-package
+          path: package.tgz
