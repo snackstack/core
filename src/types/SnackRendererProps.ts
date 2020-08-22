@@ -3,6 +3,7 @@ import { Snack } from './Snack';
 export interface SnackRendererProps {
   index: number;
   heightOffset: number;
+  previousHeightOffset: number;
   spacing: number;
   snack: Omit<Snack, 'action'>;
   snackRef: React.RefObject<HTMLElement>;
