@@ -26,7 +26,7 @@ jobs:
         if: contains(toJson(github.event.commits), '[experimental]') == true
         with:
           name: build-output
-          path: dist/
+          path: dist
   experimental-publish:
     if: contains(toJson(github.event.commits), '[experimental]') == true
     needs: build
@@ -36,6 +36,9 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: build-output
+          path: dist
+      - name: Display file structure
+        run: ls -R
       - uses: actions/setup-node@v1
         with:
           node-version: 12.x
