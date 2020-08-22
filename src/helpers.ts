@@ -31,6 +31,5 @@ export function getDefaultOptions(options?: Partial<SnackProviderOptions>): Snac
     autoHideDuration: options?.autoHideDuration ?? defaultAutoHideDuration,
     preventDuplicates: options?.preventDuplicates ?? false,
     spacing: options?.spacing ?? defaultSpacing,
-    hideIcon: options?.hideIcon ?? false,
   };
 }

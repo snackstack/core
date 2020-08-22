@@ -3,22 +3,17 @@ import { useHeightObserver, usePrevious } from './hooks';
 import { Snack } from './types/Snack';
 import { SnackRendererProps } from './types/SnackRendererProps';
 
-type PickedSnackRendererProps = Omit<
-  SnackRendererProps,
-  'snackRef' | 'previousOffset' | 'action' | 'onSetHeight' | 'onExited' | 'onClose'
->;
+type PickedSnackRendererProps = Omit<SnackRendererProps, 'snackRef' | 'previousOffset' | 'action'>;
 
 interface ComponentProps<C extends SnackRendererProps> extends PickedSnackRendererProps {
   snack: Snack;
   renderer: ComponentType<C>;
   rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
-  onClose(id: Snack['id']): void;
-  onExited(id: Snack['id']): void;
-  onSetHeight(id: Snack['id'], height: number): void;
+  onSetHeight(height: number): void;
 }
 
 function SnackItemComponent<C extends SnackRendererProps>({ snack, ...props }: ComponentProps<C>) {
-  const snackRef = useHeightObserver(snack.dynamicHeight, height => props.onSetHeight(snack.id, height));
+  const snackRef = useHeightObserver(snack.dynamicHeight, props.onSetHeight);
   const previousOffset = usePrevious(props.offset);
 
   let action = snack.action;
@@ -26,7 +21,7 @@ function SnackItemComponent<C extends SnackRendererProps>({ snack, ...props }: C
     // todo: we need to created a filtered ExposedSnack item here from 'snack'
     //       as to not leak implementation details to the user
 
-    action = action(snack, () => props.onClose(snack.id));
+    action = action(snack, props.onClose);
   }
 
   const Renderer = props.renderer as ComponentType<SnackRendererProps>;
@@ -40,10 +35,8 @@ function SnackItemComponent<C extends SnackRendererProps>({ snack, ...props }: C
       snackRef={snackRef}
       action={action}
       autoHideDuration={props.autoHideDuration}
-      hideIcon={props.hideIcon}
-      onClose={() => props.onClose(snack.id)}
-      onExited={() => props.onExited(snack.id)}
-      onSetHeight={height => props.onSetHeight(snack.id, height)}
+      onClose={props.onClose}
+      onExited={props.onExited}
       {...props.rendererProps}
     />
   );

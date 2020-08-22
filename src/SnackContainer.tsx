@@ -34,6 +34,8 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
   return (
     <>
       {activeIds.map((id, index) => {
+        // todo: offset calculation should be part of the renderer
+        //       we should only inform the renderer of the height of previous SnackItems
         const offset = getOffset(index, activeIds, items, options.spacing);
 
         if (enableAutoHide && index > 0) {
@@ -45,6 +47,8 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
 
         const snack = items[id];
 
+        if (!snack) return null;
+
         return (
           <SnackItem<C>
             key={snack.id}
@@ -52,10 +56,10 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
             offset={offset}
             snack={snack}
             autoHideDuration={enableAutoHide && !snack.persist ? options.autoHideDuration : null}
-            hideIcon={options.hideIcon}
-            onClose={handleClose}
-            onExited={handleExited}
-            onSetHeight={handleSetHeight}
+            // todo: this will cause unnecessary re-renders
+            onClose={() => handleClose(snack.id)}
+            onExited={() => handleExited(snack.id)}
+            onSetHeight={height => handleSetHeight(snack.id, height)}
             renderer={props.renderer}
             rendererProps={props.rendererProps}
           />

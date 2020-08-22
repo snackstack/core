@@ -4,5 +4,4 @@ export type SnackProviderOptions = {
   spacing: number;
   autoHideDuration: number;
   preventDuplicates: boolean;
-  hideIcon: boolean; // todo: not sure if this should be here
 };

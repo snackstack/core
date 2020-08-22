@@ -29,7 +29,7 @@ export function useHeightObserver(observe: boolean, onHeightChanged: (height: nu
     return () => {
       resizeObserver?.disconnect();
     };
-  }, [observe]);
+  }, [observe, onHeightChanged]);
 
   return ref;
 }
