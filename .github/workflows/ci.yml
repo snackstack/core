@@ -37,8 +37,6 @@ jobs:
         with:
           name: build-output
           path: dist
-      - name: Display file structure
-        run: ls -R
       - uses: actions/setup-node@v1
         with:
           node-version: 12.x
