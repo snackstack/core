@@ -8,6 +8,5 @@ export interface SnackRendererProps {
   snackRef: React.MutableRefObject<HTMLElement | undefined>;
   action: React.ReactNode;
   autoHideDuration: number | null;
-  onClose(): void;
   onExited(): void;
 }

@@ -17,7 +17,6 @@ export function useManagerSubscription(manager: SnackManager) {
       dequeue: manager.dequeue,
       update: manager.update,
       remove: manager.remove,
-      close: manager.close,
     }),
     [manager]
   );

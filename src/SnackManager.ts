@@ -22,7 +22,6 @@ export class SnackManager {
     this.dequeue = this.dequeue.bind(this);
     this.update = this.update.bind(this);
     this.remove = this.remove.bind(this);
-    this.close = this.close.bind(this);
     this.updateOptions = this.updateOptions.bind(this);
   }
 
@@ -75,9 +74,9 @@ export class SnackManager {
       const persitedItems = this.activeIds.reduce((acc: number, cur) => acc + (this.items[cur].persist ? 1 : 0), 0);
 
       if (persitedItems === this.activeIds.length) {
-        const [firstPeristedId] = this.activeIds;
-
-        this.close(firstPeristedId);
+        // todo: signaling closing to the renderer
+        // const [firstPeristedId] = this.activeIds;
+        // this.close(firstPeristedId);
       }
 
       return;
@@ -112,11 +111,6 @@ export class SnackManager {
     delete this.items[id];
 
     this.notifySubscribers();
-  }
-
-  close(id: Snack['id']) {
-    if (!this.activeIds.some(i => i === id)) this.remove(id);
-    else this.update(id, { open: false });
   }
 
   updateOptions(properties: UpdateProviderOptionsArgs) {

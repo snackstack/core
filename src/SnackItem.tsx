@@ -18,14 +18,14 @@ function SnackItemComponent<C extends SnackRendererProps>({
   rendererProps,
   ...props
 }: ComponentProps<C>) {
+  console.log('render SnackItem', { props });
+
   const snackRef = useHeightObserver(snack.dynamicHeight, onSetHeight);
 
   let action = snack.action;
   if (typeof action === 'function') {
-    // todo: we need to created a filtered ExposedSnack item here from 'snack'
-    //       as to not leak implementation details to the user
-
-    action = action(snack, props.onClose);
+    // todo: call action with method that signals closing to the Renderer
+    // action = action(snack, props.onClose);
   }
 
   const Renderer = props.renderer as ComponentType<SnackRendererProps>;

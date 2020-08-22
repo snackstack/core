@@ -12,9 +12,7 @@ interface ComponentProps<C extends SnackRendererProps> {
 }
 
 export function SnackContainer<C extends SnackRendererProps>(props: ComponentProps<C>) {
-  const { options, activeIds, items, dequeue, update, close, remove } = useManagerSubscription(props.manager);
-
-  const handleClose = useCallback((id: Snack['id']) => close(id), [close]);
+  const { options, activeIds, items, dequeue, update, remove } = useManagerSubscription(props.manager);
 
   const handleExited = useCallback(
     (id: Snack['id']) => {
@@ -55,7 +53,6 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
             snack={snack}
             autoHideDuration={enableAutoHide && !snack.persist ? options.autoHideDuration : null}
             // todo: this will cause unnecessary re-renders
-            onClose={() => handleClose(snack.id)}
             onExited={() => handleExited(snack.id)}
             onSetHeight={height => handleSetHeight(snack.id, height)}
             renderer={props.renderer}
