@@ -1,3 +1,3 @@
-export { useHeightObserver } from './useHeightObserver';
-export { usePrevious } from './usePrevious';
 export { useSnacks } from './useSnacks';
+export { useHeightObserver } from './useHeightObserver';
+export { useManagerSubscription } from './useManagerSubscription';

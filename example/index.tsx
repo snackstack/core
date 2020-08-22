@@ -22,7 +22,7 @@ interface TestRendererProps extends SnackRendererProps {
   customProp: string;
 }
 
-const TestRenderer: React.FC<TestRendererProps> = ({ index, snack, ...props }) => {
+const TestRenderer: React.FC<TestRendererProps> = ({ snack, ...props }) => {
   React.useEffect(() => {
     if (!props.autoHideDuration) return;
 
@@ -34,7 +34,7 @@ const TestRenderer: React.FC<TestRendererProps> = ({ index, snack, ...props }) =
   return (
     <div
       style={{
-        bottom: props.offset,
+        bottom: 20 + props.index * props.spacing + props.heightOffset,
         position: 'absolute',
         MozTransition: 'all 500ms',
         msTransition: 'all 500ms',

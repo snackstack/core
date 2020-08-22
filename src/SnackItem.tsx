@@ -1,9 +1,9 @@
 import React, { ComponentType } from 'react';
-import { useHeightObserver, usePrevious } from './hooks';
+import { useHeightObserver } from './hooks';
 import { Snack } from './types/Snack';
 import { SnackRendererProps } from './types/SnackRendererProps';
 
-type PickedSnackRendererProps = Omit<SnackRendererProps, 'snackRef' | 'previousOffset' | 'action'>;
+type PickedSnackRendererProps = Omit<SnackRendererProps, 'snackRef' | 'action'>;
 
 interface ComponentProps<C extends SnackRendererProps> extends PickedSnackRendererProps {
   snack: Snack;
@@ -12,9 +12,13 @@ interface ComponentProps<C extends SnackRendererProps> extends PickedSnackRender
   onSetHeight(height: number): void;
 }
 
-function SnackItemComponent<C extends SnackRendererProps>({ snack, ...props }: ComponentProps<C>) {
-  const snackRef = useHeightObserver(snack.dynamicHeight, props.onSetHeight);
-  const previousOffset = usePrevious(props.offset);
+function SnackItemComponent<C extends SnackRendererProps>({
+  snack,
+  onSetHeight,
+  rendererProps,
+  ...props
+}: ComponentProps<C>) {
+  const snackRef = useHeightObserver(snack.dynamicHeight, onSetHeight);
 
   let action = snack.action;
   if (typeof action === 'function') {
@@ -26,20 +30,7 @@ function SnackItemComponent<C extends SnackRendererProps>({ snack, ...props }: C
 
   const Renderer = props.renderer as ComponentType<SnackRendererProps>;
 
-  return (
-    <Renderer
-      index={props.index}
-      offset={props.offset}
-      previousOffset={previousOffset}
-      snack={snack}
-      snackRef={snackRef}
-      action={action}
-      autoHideDuration={props.autoHideDuration}
-      onClose={props.onClose}
-      onExited={props.onExited}
-      {...props.rendererProps}
-    />
-  );
+  return <Renderer snack={snack} snackRef={snackRef} action={action} {...props} {...rendererProps} />;
 }
 
 export const SnackItem = React.memo(SnackItemComponent) as typeof SnackItemComponent;

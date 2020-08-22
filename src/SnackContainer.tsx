@@ -1,7 +1,5 @@
 import React, { ComponentType, useCallback } from 'react';
-import { defaultTransitionDelay } from './constants';
-import { getOffset } from './helpers';
-import { useManagerSubscription } from './hooks/useManagerSubscription';
+import { useManagerSubscription } from './hooks';
 import { SnackItem } from './SnackItem';
 import { SnackManager } from './SnackManager';
 import { Snack } from './types/Snack';
@@ -22,38 +20,38 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
     (id: Snack['id']) => {
       remove(id);
 
-      setTimeout(dequeue, defaultTransitionDelay);
+      setTimeout(dequeue, options.transitionDelay);
     },
-    [remove, dequeue]
+    [remove, dequeue, options.transitionDelay]
   );
 
   const handleSetHeight = useCallback((id: Snack['id'], height: number) => update(id, { height }), [update]);
 
   let enableAutoHide = true;
+  let heightOffset = 0;
 
   return (
     <>
       {activeIds.map((id, index) => {
-        // todo: offset calculation should be part of the renderer
-        //       we should only inform the renderer of the height of previous SnackItems
-        const offset = getOffset(index, activeIds, items, options.spacing);
-
-        if (enableAutoHide && index > 0) {
-          const previousId = activeIds[index - 1];
-          const previousItem = items[previousId];
-
-          if (!previousItem.persist) enableAutoHide = false;
-        }
-
         const snack = items[id];
 
         if (!snack) return null;
+
+        if (index > 0) {
+          const previousId = activeIds[index - 1];
+          const previousItem = items[previousId];
+
+          heightOffset += previousItem.height;
+
+          if (enableAutoHide && !previousItem.persist) enableAutoHide = false;
+        }
 
         return (
           <SnackItem<C>
             key={snack.id}
             index={index}
-            offset={offset}
+            spacing={options.spacing}
+            heightOffset={heightOffset}
             snack={snack}
             autoHideDuration={enableAutoHide && !snack.persist ? options.autoHideDuration : null}
             // todo: this will cause unnecessary re-renders
