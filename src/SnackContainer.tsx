@@ -52,6 +52,7 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
             heightOffset={heightOffset}
             snack={snack}
             autoHideDuration={enableAutoHide && !snack.persist ? options.autoHideDuration : null}
+            transitionDelay={options.transitionDelay}
             onRemove={handleRemove}
             onSetHeight={handleSetHeight}
             renderer={props.renderer}

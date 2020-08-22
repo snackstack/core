@@ -31,17 +31,24 @@ const TestRenderer: React.FC<TestRendererProps> = ({ snack, ...props }) => {
     return () => clearTimeout(timeout);
   }, [props.autoHideDuration]);
 
+  const transtion = `all ${props.transitionDelay}ms`;
+
+  const style: React.CSSProperties = {
+    bottom: 20 + props.index * props.spacing + props.heightOffset,
+    background: '#424242',
+    padding: '8px 10px',
+    color: 'white',
+    position: 'absolute',
+    MozTransition: transtion,
+    msTransition: transtion,
+    transition: transtion,
+  };
+
   return (
     <div
       // @ts-ignore
       ref={props.snackRef}
-      style={{
-        bottom: 20 + props.index * props.spacing + props.heightOffset,
-        position: 'absolute',
-        MozTransition: 'all 500ms',
-        msTransition: 'all 500ms',
-        transition: 'all 500ms',
-      }}
+      style={style}
     >
       {snack.message} ({props.customProp})
     </div>

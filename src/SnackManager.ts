@@ -1,4 +1,4 @@
-import { getDefaultOptions } from './helpers';
+import { getDefaultOptions, getSnack } from './helpers';
 import { UpdateProviderOptionsArgs } from './SnackContext';
 import { Snack, SnackPayload } from './types/Snack';
 import { SnackProviderOptions } from './types/SnackProviderOptions';
@@ -25,34 +25,25 @@ export class SnackManager {
     this.updateOptions = this.updateOptions.bind(this);
   }
 
-  enqueue(payload: SnackPayload | string): Snack['id'] | null {
-    if (!payload) return null;
+  enqueue(input: SnackPayload | string): Snack['id'] | null {
+    if (!input) return null;
 
-    let partialSnack: SnackPayload;
+    let payload: SnackPayload;
 
-    if (typeof payload === 'string') partialSnack = { message: payload };
+    if (typeof input === 'string') payload = { message: input };
     else {
-      if (!payload.message) return null;
+      if (!input.message) return null;
 
-      partialSnack = payload;
+      payload = input;
     }
 
     if (this.options.preventDuplicates) {
-      if (this.ids.some(id => this.items[id].message === partialSnack.message)) return null;
+      if (this.ids.some(id => this.items[id].message === payload.message)) return null;
     }
 
-    if (partialSnack.id && this.ids.some(id => id === partialSnack.id)) return null;
+    if (payload.id && this.ids.some(id => id === payload.id)) return null;
 
-    // todo: this should be a separate merge-utility
-    const snack: Snack = {
-      id: partialSnack.id ?? new Date().getTime() + Math.random(),
-      open: true,
-      message: partialSnack.message,
-      dynamicHeight: !!partialSnack.dynamicHeight,
-      persist: partialSnack.persist ?? this.options.persist,
-      action: partialSnack.action,
-      variant: partialSnack.variant ?? 'default',
-    };
+    const snack = getSnack(payload, this.options);
 
     this.items[snack.id] = snack;
     this.ids.push(snack.id);

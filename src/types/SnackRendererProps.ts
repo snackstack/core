@@ -5,6 +5,7 @@ export interface SnackRendererProps {
   heightOffset: number;
   previousHeightOffset: number;
   spacing: number;
+  transitionDelay: number;
   snack: Omit<Snack, 'action'>;
   snackRef: React.RefObject<HTMLElement>;
   action: React.ReactNode;
