@@ -9,7 +9,7 @@ export interface SnackRendererProps {
   action: React.ReactNode;
   autoHideDuration: number | null;
   hideIcon: boolean;
-  onSetHeight(id: Snack['id'], height: number): void;
-  onClose(id: Snack['id']): void;
-  onExited(id: Snack['id']): void;
+  onSetHeight(height: number): void;
+  onClose(): void;
+  onExited(): void;
 }

@@ -3,12 +3,18 @@ import { useHeightObserver, usePrevious } from './hooks';
 import { Snack } from './types/Snack';
 import { SnackRendererProps } from './types/SnackRendererProps';
 
-type PickedSnackRendererProps = Omit<SnackRendererProps, 'snackRef' | 'previousOffset' | 'action'>;
+type PickedSnackRendererProps = Omit<
+  SnackRendererProps,
+  'snackRef' | 'previousOffset' | 'action' | 'onSetHeight' | 'onExited' | 'onClose'
+>;
 
 interface ComponentProps<C extends SnackRendererProps> extends PickedSnackRendererProps {
   snack: Snack;
   renderer: ComponentType<C>;
   rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
+  onClose(id: Snack['id']): void;
+  onExited(id: Snack['id']): void;
+  onSetHeight(id: Snack['id'], height: number): void;
 }
 
 function SnackItemComponent<C extends SnackRendererProps>({ snack, ...props }: ComponentProps<C>) {
@@ -35,9 +41,10 @@ function SnackItemComponent<C extends SnackRendererProps>({ snack, ...props }: C
       action={action}
       autoHideDuration={props.autoHideDuration}
       hideIcon={props.hideIcon}
-      onClose={props.onClose}
-      onExited={props.onExited}
-      onSetHeight={props.onSetHeight}
+      onClose={() => props.onClose(snack.id)}
+      onExited={() => props.onExited(snack.id)}
+      onSetHeight={height => props.onSetHeight(snack.id, height)}
+      {...props.rendererProps}
     />
   );
 }
