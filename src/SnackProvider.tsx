@@ -17,7 +17,7 @@ export function SnackProvider<C extends SnackRendererProps>(props: PropsWithChil
   const contextValue = useMemo<SnackContextType>(
     () => ({
       enqueueSnack: manager.enqueue,
-      closeSnack: manager.close,
+      closeSnack: id => manager.update(id, { open: false }),
       updateSnack: manager.update,
       updateProviderOptions: manager.updateOptions,
       removeSnack: manager.remove,

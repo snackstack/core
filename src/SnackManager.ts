@@ -41,17 +41,12 @@ export class SnackManager {
       if (this.ids.some(id => this.items[id].message === partialSnack.message)) return null;
     }
 
-    if (partialSnack.id && this.ids.some(id => id === partialSnack.id)) {
-      console.warn('Snack with same id has already been enqued', { snack: payload });
-
-      return null;
-    }
+    if (partialSnack.id && this.ids.some(id => id === partialSnack.id)) return null;
 
     // todo: this should be a separate merge-utility
     const snack: Snack = {
       id: partialSnack.id ?? new Date().getTime() + Math.random(),
       open: true,
-      height: 48,
       message: partialSnack.message,
       dynamicHeight: !!partialSnack.dynamicHeight,
       persist: partialSnack.persist ?? this.options.persist,
@@ -74,9 +69,9 @@ export class SnackManager {
       const persitedItems = this.activeIds.reduce((acc: number, cur) => acc + (this.items[cur].persist ? 1 : 0), 0);
 
       if (persitedItems === this.activeIds.length) {
-        // todo: signaling closing to the renderer
-        // const [firstPeristedId] = this.activeIds;
-        // this.close(firstPeristedId);
+        const [firstPeristedId] = this.activeIds;
+
+        this.update(firstPeristedId, { open: false });
       }
 
       return;

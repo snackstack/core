@@ -26,13 +26,15 @@ const TestRenderer: React.FC<TestRendererProps> = ({ snack, ...props }) => {
   React.useEffect(() => {
     if (!props.autoHideDuration) return;
 
-    const timeout = setTimeout(props.onExited, props.autoHideDuration);
+    const timeout = setTimeout(props.onRemove, props.autoHideDuration);
 
     return () => clearTimeout(timeout);
   }, [props.autoHideDuration]);
 
   return (
     <div
+      // @ts-ignore
+      ref={props.snackRef}
       style={{
         bottom: 20 + props.index * props.spacing + props.heightOffset,
         position: 'absolute',

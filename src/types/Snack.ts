@@ -5,10 +5,10 @@ export interface Snack {
   dynamicHeight: boolean;
   persist: boolean;
   message: React.ReactNode;
-  action?: React.ReactNode | ((snack: this, close: () => void) => React.ReactNode);
+  action?: React.ReactNode | ((snack: this) => React.ReactNode);
   variant: SnackVariant;
   open: boolean;
-  height: number;
+  height?: number;
 }
 
 export type SnackPayload = Partial<Omit<Snack, 'id' | 'height' | 'open'>> & {

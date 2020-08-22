@@ -5,8 +5,8 @@ export interface SnackRendererProps {
   heightOffset: number;
   spacing: number;
   snack: Omit<Snack, 'action'>;
-  snackRef: React.MutableRefObject<HTMLElement | undefined>;
+  snackRef: React.RefObject<HTMLElement>;
   action: React.ReactNode;
   autoHideDuration: number | null;
-  onExited(): void;
+  onRemove(): void;
 }

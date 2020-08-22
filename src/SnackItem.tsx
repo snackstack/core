@@ -1,36 +1,40 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType, useCallback } from 'react';
 import { useHeightObserver } from './hooks';
 import { Snack } from './types/Snack';
 import { SnackRendererProps } from './types/SnackRendererProps';
 
-type PickedSnackRendererProps = Omit<SnackRendererProps, 'snackRef' | 'action'>;
+type PickedSnackRendererProps = Omit<SnackRendererProps, 'snackRef' | 'action' | 'onRemove'>;
 
 interface ComponentProps<C extends SnackRendererProps> extends PickedSnackRendererProps {
   snack: Snack;
   renderer: ComponentType<C>;
   rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
-  onSetHeight(height: number): void;
+  onRemove(id: Snack['id']): void;
+  onSetHeight(id: Snack['id'], height: number): void;
 }
 
 function SnackItemComponent<C extends SnackRendererProps>({
   snack,
+  onRemove,
   onSetHeight,
   rendererProps,
   ...props
 }: ComponentProps<C>) {
-  console.log('render SnackItem', { props });
+  const handleRemove = useCallback(() => onRemove(snack.id), [snack.id, onRemove]);
+  const handleSetHeight = useCallback((height: number) => onSetHeight(snack.id, height), [snack.id, onSetHeight]);
 
-  const snackRef = useHeightObserver(snack.dynamicHeight, onSetHeight);
+  const snackRef = useHeightObserver(snack.dynamicHeight, handleSetHeight);
 
   let action = snack.action;
   if (typeof action === 'function') {
-    // todo: call action with method that signals closing to the Renderer
-    // action = action(snack, props.onClose);
+    action = action(snack);
   }
 
   const Renderer = props.renderer as ComponentType<SnackRendererProps>;
 
-  return <Renderer snack={snack} snackRef={snackRef} action={action} {...props} {...rendererProps} />;
+  return (
+    <Renderer snack={snack} snackRef={snackRef} action={action} onRemove={handleRemove} {...props} {...rendererProps} />
+  );
 }
 
 export const SnackItem = React.memo(SnackItemComponent) as typeof SnackItemComponent;

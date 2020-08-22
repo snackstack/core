@@ -14,7 +14,7 @@ interface ComponentProps<C extends SnackRendererProps> {
 export function SnackContainer<C extends SnackRendererProps>(props: ComponentProps<C>) {
   const { options, activeIds, items, dequeue, update, remove } = useManagerSubscription(props.manager);
 
-  const handleExited = useCallback(
+  const handleRemove = useCallback(
     (id: Snack['id']) => {
       remove(id);
 
@@ -39,7 +39,7 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
           const previousId = activeIds[index - 1];
           const previousItem = items[previousId];
 
-          heightOffset += previousItem.height;
+          if (previousItem.height) heightOffset += previousItem.height;
 
           if (enableAutoHide && !previousItem.persist) enableAutoHide = false;
         }
@@ -52,9 +52,8 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
             heightOffset={heightOffset}
             snack={snack}
             autoHideDuration={enableAutoHide && !snack.persist ? options.autoHideDuration : null}
-            // todo: this will cause unnecessary re-renders
-            onExited={() => handleExited(snack.id)}
-            onSetHeight={height => handleSetHeight(snack.id, height)}
+            onRemove={handleRemove}
+            onSetHeight={handleSetHeight}
             renderer={props.renderer}
             rendererProps={props.rendererProps}
           />
