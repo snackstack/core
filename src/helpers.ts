@@ -7,7 +7,6 @@ export function getSnack(payload: NewSnack, options: Required<SnackProviderOptio
     id: payload.id ?? new Date().getTime() + Math.random(),
     open: true,
     message: payload.message,
-    dynamicHeight: !!payload.dynamicHeight,
     persist: payload.persist ?? options.persist,
     action: payload.action,
     variant: payload.variant ?? 'default',

@@ -17,6 +17,7 @@ export class SnackManager implements ISnackManager {
   private readonly items: KeyedSnacks = {};
   private readonly activeIds: Snack['id'][] = [];
   private readonly listeners = new Set<Listener>();
+  private _activeSnackCache: Snack[] = [];
 
   constructor(options?: SnackProviderOptions) {
     this.options = getDefaultOptions(options);
@@ -92,11 +93,13 @@ export class SnackManager implements ISnackManager {
   subscribe = (listener: Listener) => {
     this.listeners.add(listener);
 
-    return () => this.listeners.delete(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
   };
 
-  getItems = () => {
-    return this.activeIds.map(id => this.items[id]);
+  getState = () => {
+    return this._activeSnackCache;
   };
 
   private dequeue = () => {
@@ -128,6 +131,8 @@ export class SnackManager implements ISnackManager {
   };
 
   private notifyListeners = () => {
+    this._activeSnackCache = this.activeIds.map(id => this.items[id]);
+
     this.listeners.forEach(listener => listener());
   };
 }

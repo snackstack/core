@@ -5,9 +5,7 @@ export interface Snack {
   message: React.ReactNode;
   variant: SnackVariant;
   persist: boolean;
-  dynamicHeight: boolean;
   open: boolean;
-  height?: number;
   action?: React.ReactNode | ((snack: this) => React.ReactNode);
   meta?: Record<string, any>;
 }
