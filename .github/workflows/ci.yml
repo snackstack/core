@@ -52,7 +52,7 @@ jobs:
       - run: ls
       - run: yarn version --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)"
       - run: yarn pack --filename package.tgz
-      - run: yarn publish package.tgz --tag experimental --access public --no-git-tag-version
+      - run: yarn publish package.tgz --tag experimental --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - uses: actions/setup-node@v1
@@ -60,7 +60,7 @@ jobs:
           node-version: 16.x
           registry-url: https://npm.pkg.github.com/
           scope: '@snackstack'
-      - run: yarn publish package.tgz --tag experimental --no-git-tag-version
+      - run: yarn publish package.tgz --tag experimental
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - uses: actions/upload-artifact@v2
