@@ -7,10 +7,11 @@ import { SnackRendererProps } from './types/SnackRendererProps';
 
 interface ComponentProps<C extends SnackRendererProps> {
   manager: SnackManager;
-  renderer: ComponentType<C>;
-  rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
+  // renderer: ComponentType<C>;
+  // rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
 }
 
+/** @internal */
 export function SnackContainer<C extends SnackRendererProps>(props: ComponentProps<C>) {
   const { options, activeIds, items, dequeue, update, remove } = useManagerSubscription(props.manager);
 
@@ -55,8 +56,8 @@ export function SnackContainer<C extends SnackRendererProps>(props: ComponentPro
             transitionDelay={options.transitionDelay}
             onRemove={handleRemove}
             onSetHeight={handleSetHeight}
-            renderer={props.renderer}
-            rendererProps={props.rendererProps}
+            // renderer={props.renderer}
+            // rendererProps={props.rendererProps}
           />
         );
       })}

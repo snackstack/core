@@ -7,8 +7,8 @@ type PickedSnackRendererProps = Omit<SnackRendererProps, 'snackRef' | 'action' |
 
 interface ComponentProps<C extends SnackRendererProps> extends PickedSnackRendererProps {
   snack: Snack;
-  renderer: ComponentType<C>;
-  rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
+  // renderer: ComponentType<C>;
+  // rendererProps?: Partial<Omit<C, keyof SnackRendererProps>>;
   onRemove(id: Snack['id']): void;
   onSetHeight(id: Snack['id'], height: number): void;
 }
@@ -17,7 +17,7 @@ function SnackItemComponent<C extends SnackRendererProps>({
   snack,
   onRemove,
   onSetHeight,
-  rendererProps,
+  // rendererProps,
   ...props
 }: ComponentProps<C>) {
   const handleRemove = useCallback(() => onRemove(snack.id), [snack.id, onRemove]);
@@ -31,19 +31,21 @@ function SnackItemComponent<C extends SnackRendererProps>({
     action = action(snack);
   }
 
-  const Renderer = props.renderer as ComponentType<SnackRendererProps>;
+  return null;
+  // const Renderer = props.renderer as ComponentType<SnackRendererProps>;
 
-  return (
-    <Renderer
-      snack={snack}
-      snackRef={snackRef}
-      action={action}
-      previousHeightOffset={previousHeightOffset}
-      onRemove={handleRemove}
-      {...props}
-      {...rendererProps}
-    />
-  );
+  // return (
+  //   <Renderer
+  //     snack={snack}
+  //     snackRef={snackRef}
+  //     action={action}
+  //     previousHeightOffset={previousHeightOffset}
+  //     onRemove={handleRemove}
+  //     {...props}
+  //     {...rendererProps}
+  //   />
+  // );
 }
 
+/** @internal */
 export const SnackItem = React.memo(SnackItemComponent) as typeof SnackItemComponent;

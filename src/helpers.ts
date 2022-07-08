@@ -1,8 +1,8 @@
 import { defaultAutoHideDuration, defaultMaxSnacks, defaultSpacing, defaultTransitionDelay } from './constants';
-import { Snack, SnackPayload } from './types/Snack';
-import { SnackProviderOptions } from './types/SnackProviderOptions';
+import { Snack, NewSnack, SnackProviderOptions } from './types';
 
-export function getSnack(payload: SnackPayload, options: SnackProviderOptions): Snack {
+/** @internal */
+export function getSnack(payload: NewSnack, options: Required<SnackProviderOptions>): Snack {
   return {
     id: payload.id ?? new Date().getTime() + Math.random(),
     open: true,
@@ -14,7 +14,8 @@ export function getSnack(payload: SnackPayload, options: SnackProviderOptions): 
   };
 }
 
-export function getDefaultOptions(options?: Partial<SnackProviderOptions>): SnackProviderOptions {
+/** @internal */
+export function getDefaultOptions(options?: Partial<SnackProviderOptions>): Required<SnackProviderOptions> {
   return {
     maxSnacks: options?.maxSnacks ?? defaultMaxSnacks,
     persist: options?.persist ?? false,

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useReducer } from 'react';
 import { SnackManager } from '../SnackManager';
 
+/** @internal */
 export function useManagerSubscription(manager: SnackManager) {
   const [, forceRender] = useReducer(s => s + 1, 0);
 

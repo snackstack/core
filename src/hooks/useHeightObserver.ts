@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 // todo: maybe requires polyfill for ResizeObserver
+/** @internal */
 export function useHeightObserver(observe: boolean, onHeightChanged: (height: number) => void) {
   const ref = useRef<HTMLElement>(null);
 
