@@ -4,6 +4,7 @@
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
+    "stripInternal": true,
     "declaration": true,
     "sourceMap": true,
     "rootDir": "./src",
@@ -17,7 +18,8 @@
     "paths": {
       "*": ["src/*", "node_modules/*"]
     },
-    "jsx": "react",
-    "esModuleInterop": true
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "types": ["resize-observer-browser"]
   }
 }
