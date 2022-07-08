@@ -1,13 +1,8 @@
-import { ReactNode, useCallback, useDebugValue, useMemo } from 'react';
+import { useCallback, useDebugValue, useMemo } from 'react';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
 import { SnackManager } from '../SnackManager';
-import { Snack } from '../types';
+import { ActiveSnack } from '../types';
 import { useSnackManager } from './useSnackManager';
-
-type ActiveSnack = Snack & {
-  action: ReactNode;
-  index: number;
-};
 
 export function useActiveSnacks() {
   const manager = useSnackManager() as SnackManager;
