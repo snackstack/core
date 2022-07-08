@@ -31,42 +31,40 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - uses: actions/upload-artifact@v2
-        if: |
-          contains(toJson(github.event.commits), '[experimental]') == true || 
-          ${{ inputs.publishExperimental == 'true' }}
+        if: ${{ inputs.publishExperimental == 'true' }}
         with:
           name: build-output
           path: dist
-  experimental-publish:
-    if: |
-      contains(toJson(github.event.commits), '[experimental]') == true || 
-      ${{ inputs.publishExperimental == 'true' }}
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: build-output
-          path: dist
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-          registry-url: https://registry.npmjs.org/
-      - run: yarn version --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)"
-      - run: yarn pack --filename package.tgz
-      - run: yarn publish package.tgz --tag experimental --access public
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-          registry-url: https://npm.pkg.github.com/
-          scope: '@snackstack'
-      - run: yarn publish package.tgz --tag experimental
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: experimental-package
-          path: package.tgz
+  # experimental-publish:
+  #   if: |
+  #     contains(toJson(github.event.commits), '[experimental]') == true || 
+  #     ${{ inputs.publishExperimental == 'true' }}
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: build-output
+  #         path: dist
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 12.x
+  #         registry-url: https://registry.npmjs.org/
+  #     - run: yarn version --no-git-tag-version --new-version "0.0.0-experimental-$(echo $GITHUB_SHA | cut -c1-9)"
+  #     - run: yarn pack --filename package.tgz
+  #     - run: yarn publish package.tgz --tag experimental --access public
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 12.x
+  #         registry-url: https://npm.pkg.github.com/
+  #         scope: '@snackstack'
+  #     - run: yarn publish package.tgz --tag experimental
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  #     - uses: actions/upload-artifact@v2
+  #       with:
+  #         name: experimental-package
+  #         path: package.tgz
