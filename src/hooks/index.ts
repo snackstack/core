@@ -1,4 +1,2 @@
-export { useSnacks } from './useSnacks';
-export { usePrevious } from './usePrevious';
-export { useHeightObserver } from './useHeightObserver';
-export { useManagerSubscription } from './useManagerSubscription';
+export { useSnackManager } from './useSnackManager';
+export { useActiveSnacks } from './useActiveSnacks';

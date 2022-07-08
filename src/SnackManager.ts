@@ -2,28 +2,25 @@ import { getDefaultOptions, getSnack } from './helpers';
 import { Snack, NewSnack, SnackProviderOptions } from './types';
 
 type KeyedSnacks = { [key in Snack['id']]: Snack };
+type Listener = () => void;
+
+interface ISnackManager {
+  enqueue(input: NewSnack | string): Snack['id'] | null;
+}
 
 /** @internal */
-export class SnackManager {
-  options: Required<SnackProviderOptions>;
-  ids: Snack['id'][];
-  items: KeyedSnacks;
-  activeIds: Snack['id'][];
+export class SnackManager implements ISnackManager {
+  private readonly options: Required<SnackProviderOptions>;
+  private readonly ids: Snack['id'][] = [];
+  private readonly items: KeyedSnacks = {};
+  private readonly activeIds: Snack['id'][] = [];
+  private readonly listeners = new Set<Listener>();
 
-  constructor(options?: Partial<SnackProviderOptions>) {
+  constructor(options?: SnackProviderOptions) {
     this.options = getDefaultOptions(options);
-
-    this.items = {};
-    this.ids = [];
-    this.activeIds = [];
-
-    this.enqueue = this.enqueue.bind(this);
-    this.dequeue = this.dequeue.bind(this);
-    this.update = this.update.bind(this);
-    this.remove = this.remove.bind(this);
   }
 
-  enqueue(input: NewSnack | string): Snack['id'] | null {
+  enqueue = (input: NewSnack | string): Snack['id'] | null => {
     if (!input) {
       return null;
     }
@@ -58,9 +55,49 @@ export class SnackManager {
     this.dequeue();
 
     return snack.id;
-  }
+  };
 
-  dequeue() {
+  update = (id: Snack['id'], properties: Partial<Snack>) => {
+    if (!this.items[id]) {
+      return;
+    }
+
+    this.items[id] = { ...this.items[id], ...properties };
+
+    this.notifyListeners();
+  };
+
+  close = (id: Snack['id']) => this.update(id, { open: false });
+
+  remove = (id: Snack['id']) => {
+    const activeIndex = this.ids.indexOf(id);
+
+    if (activeIndex > -1) {
+      this.activeIds.splice(activeIndex, 1);
+    }
+
+    const idIndex = this.ids.indexOf(id);
+
+    if (idIndex > -1) {
+      this.ids.splice(idIndex, 1);
+    }
+
+    delete this.items[id];
+
+    this.notifyListeners();
+  };
+
+  subscribe = (listener: Listener) => {
+    this.listeners.add(listener);
+
+    return () => this.listeners.delete(listener);
+  };
+
+  getItems = () => {
+    return this.activeIds.map(id => this.items[id]);
+  };
+
+  private dequeue = () => {
     if (this.ids.length < 1) {
       return;
     }
@@ -85,42 +122,10 @@ export class SnackManager {
 
     this.activeIds.push(nextId);
 
-    this.notifySubscribers();
-  }
+    this.notifyListeners();
+  };
 
-  update(id: Snack['id'], properties: Partial<Snack>) {
-    if (!this.items[id]) {
-      return;
-    }
-
-    this.items[id] = { ...this.items[id], ...properties };
-
-    this.notifySubscribers();
-  }
-
-  remove(id: Snack['id']) {
-    const activeIndex = this.ids.indexOf(id);
-
-    if (activeIndex > -1) {
-      this.activeIds.splice(activeIndex, 1);
-    }
-
-    const idIndex = this.ids.indexOf(id);
-
-    if (idIndex > -1) {
-      this.ids.splice(idIndex, 1);
-    }
-
-    delete this.items[id];
-
-    this.notifySubscribers();
-  }
-
-  private notifySubscribers() {
-    if (this.rerenderSubscribers) {
-      this.rerenderSubscribers();
-    }
-  }
-
-  rerenderSubscribers?: () => void;
+  private notifyListeners = () => {
+    this.listeners.forEach(listener => listener());
+  };
 }
