@@ -2,12 +2,16 @@ name: CI
 
 on:
   workflow_dispatch:
+    inputs:
+      publishExperimental:
+        description: 'Publish an experimental release'
+        required: false 
+        type: boolean
   push:
     branches:
       - main
     paths-ignore: 
       - '**/**.md'
-      - 'example/**'
 
 jobs:
   build:
@@ -26,12 +30,16 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - uses: actions/upload-artifact@v2
-        if: contains(toJson(github.event.commits), '[experimental]') == true
+        if: |
+          contains(toJson(github.event.commits), '[experimental]') == true
+          ${{ inputs.publishExperimental }} == true
         with:
           name: build-output
           path: dist
   experimental-publish:
-    if: contains(toJson(github.event.commits), '[experimental]') == true
+    if: |
+      contains(toJson(github.event.commits), '[experimental]') == true
+      ${{ inputs.publishExperimental }} == true
     needs: build
     runs-on: ubuntu-latest
     steps:
