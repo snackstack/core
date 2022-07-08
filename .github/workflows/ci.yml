@@ -31,12 +31,16 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - uses: actions/upload-artifact@v2
-        if: ${{ contains(toJson(github.event.commits), '[experimental]') == true || ${{ inputs.publishExperimental }} == true }}
+        if: |
+          contains(toJson(github.event.commits), '[experimental]') == true || 
+          ${{ inputs.publishExperimental }} == true
         with:
           name: build-output
           path: dist
   experimental-publish:
-    if: ${{ contains(toJson(github.event.commits), '[experimental]') == true || ${{ inputs.publishExperimental }} == true }}
+    if: |
+      contains(toJson(github.event.commits), '[experimental]') == true || 
+      ${{ inputs.publishExperimental }} == true
     needs: build
     runs-on: ubuntu-latest
     steps:
