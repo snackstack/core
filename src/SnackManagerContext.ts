@@ -1,8 +1,6 @@
 import { createContext } from 'react';
-import { SnackManager } from 'SnackManager';
-
-type ContextType = Pick<SnackManager, 'enqueue' | 'update' | 'close'>;
+import { ISnackManager } from './SnackManager';
 
 /** @internal */
-export const SnackManagerContext = createContext<ContextType>(null!);
+export const SnackManagerContext = createContext<ISnackManager>(null!);
 SnackManagerContext.displayName = 'SnackManagerContext';
