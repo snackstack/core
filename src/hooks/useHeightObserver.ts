@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 
+// todo: maybe requires polyfill for ResizeObserver
 export function useHeightObserver(observe: boolean, onHeightChanged: (height: number) => void) {
   const ref = useRef<HTMLElement>(null);
 
@@ -8,13 +9,9 @@ export function useHeightObserver(observe: boolean, onHeightChanged: (height: nu
 
     onHeightChanged(ref.current.clientHeight);
 
-    // todo: missing type definitions for ResizeObserver / ResizeObserver might need a polyfill for older browsers
-    // @ts-ignore
     let resizeObserver: ResizeObserver;
 
-    // @ts-ignore
     if (observe && typeof ResizeObserver !== 'undefined') {
-      // @ts-ignore
       resizeObserver = new ResizeObserver(entries => {
         const entry = entries[0];
 
