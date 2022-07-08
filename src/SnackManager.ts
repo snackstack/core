@@ -8,6 +8,7 @@ export interface ISnackManager {
   enqueue(input: NewSnack | string): Snack['id'] | null;
   update(id: Snack['id'], properties: Partial<Snack>): void;
   close(id: Snack['id']): void;
+  remove(id: Snack['id']): void;
 }
 
 /** @internal */
