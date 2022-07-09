@@ -1,8 +1,8 @@
-import React, { FC, PropsWithChildren, useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useSnackManager, useHeightObserver } from './hooks';
 import { Snack } from './types';
 
-type Props = PropsWithChildren<{ snackId: Snack['id'] }>;
+type Props = { snackId: Snack['id']; children: React.ReactElement };
 
 export const SnackItem: FC<Props> = ({ children, snackId }) => {
   const manager = useSnackManager();
@@ -16,7 +16,6 @@ export const SnackItem: FC<Props> = ({ children, snackId }) => {
   const snackRef = useHeightObserver(handleHeightChanged);
 
   const onlyChild = React.Children.only(children);
-  // @ts-ignore
   const clonedChild = React.cloneElement(onlyChild, { ref: snackRef });
 
   return clonedChild;
