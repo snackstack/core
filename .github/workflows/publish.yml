@@ -28,7 +28,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn lint
       - run: yarn build
-      - run: yarn version --new-version "${{ github.event.release.tag_name || inputs.version }}"
+      - run: yarn version --new-version "${{ github.event.release.tag_name || inputs.version }}" --no-git-tag-version
       - run: yarn pack --filename package.tgz
       - run: yarn publish package.tgz --access public
         env:
