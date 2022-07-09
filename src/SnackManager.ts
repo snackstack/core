@@ -1,4 +1,4 @@
-import { getDefaultOptions, getSnack } from './helpers';
+import { getDefaultOptions, createSnack } from './helpers';
 import { Snack, NewSnack, SnackProviderOptions } from './types';
 
 type KeyedSnacks = { [key in Snack['id']]: Snack };
@@ -43,17 +43,17 @@ export class SnackManager implements ISnackManager {
       payload = input;
     }
 
+    if (payload.id && this.ids.some(id => id === payload.id)) {
+      return null;
+    }
+
     if (this.options.preventDuplicates) {
       if (this.ids.some(id => this.items[id].message === payload.message)) {
         return null;
       }
     }
 
-    if (payload.id && this.ids.some(id => id === payload.id)) {
-      return null;
-    }
-
-    const snack = getSnack(payload, this.options);
+    const snack = createSnack(payload, this.options);
 
     this.items[snack.id] = snack;
     this.ids.push(snack.id);
@@ -73,7 +73,9 @@ export class SnackManager implements ISnackManager {
     this.notifyListeners();
   };
 
-  close = (id: Snack['id']) => this.update(id, { open: false });
+  close = (id: Snack['id']) => {
+    this.update(id, { status: 'closing' });
+  };
 
   remove = (id: Snack['id']) => {
     const activeIndex = this.ids.indexOf(id);
@@ -121,7 +123,7 @@ export class SnackManager implements ISnackManager {
       if (persitedItems === this.activeIds.length) {
         const [firstPeristedId] = this.activeIds;
 
-        this.update(firstPeristedId, { open: false });
+        this.close(firstPeristedId);
       }
 
       return;
@@ -132,6 +134,8 @@ export class SnackManager implements ISnackManager {
     if (!nextId) {
       return;
     }
+
+    this.items[nextId].status = 'open';
 
     this.activeIds.push(nextId);
 

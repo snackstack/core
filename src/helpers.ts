@@ -1,12 +1,12 @@
 import { Snack, NewSnack, SnackProviderOptions } from './types';
 
 /** @internal */
-export function getSnack(payload: NewSnack, options: Required<SnackProviderOptions>): Snack {
+export function createSnack(payload: NewSnack, options: Required<SnackProviderOptions>): Snack {
   return {
     ...payload,
     id: payload.id ?? new Date().getTime() + Math.random(),
     message: payload.message,
-    open: true,
+    status: 'inactive',
     persist: payload.persist ?? options.persist,
     variant: payload.variant ?? 'default',
   };
