@@ -53,6 +53,7 @@ export class SnackManager implements ISnackManager {
 
     const snack = createSnack(payload, this.options);
 
+    this.snackIds.push(snack.id);
     this.snacks.set(snack.id, snack);
 
     this.dequeue();
