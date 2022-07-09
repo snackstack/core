@@ -1,3 +1,2 @@
-export { Snack } from './Snack';
-export { NewSnack } from './NewSnack';
+export { Snack, NewSnack, SnackUpdate } from './Snack';
 export { SnackManagerOptions } from './SnackManagerOptions';

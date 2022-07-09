@@ -1,9 +1,7 @@
 import { getDefaultOptions, createSnack } from './helpers';
-import { Snack, NewSnack, SnackManagerOptions } from './types';
+import { Snack, NewSnack, SnackManagerOptions, SnackUpdate } from './types';
 
 type Callback = () => void;
-
-type SnackUpdate = Partial<Omit<Snack, 'id' | 'status' | 'meta' | 'variant'>>;
 
 type Options = Readonly<Required<SnackManagerOptions>>;
 

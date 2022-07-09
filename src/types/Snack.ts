@@ -12,3 +12,7 @@ export type Snack = {
   action?: React.ReactNode | ((snack: Snack) => React.ReactNode);
   readonly meta?: Record<string, any>;
 };
+
+export type NewSnack = Partial<Omit<Snack, 'status'>>;
+
+export type SnackUpdate = Partial<Omit<Snack, 'id' | 'status' | 'variant'>>;
