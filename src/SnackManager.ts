@@ -1,15 +1,17 @@
 import { getDefaultOptions, createSnack } from './helpers';
 import { Snack, NewSnack, SnackProviderOptions } from './types';
 
-type Listener = () => void;
+type Callback = () => void;
 
-type SnackUpdate = Partial<Omit<Snack, 'id' | 'open' | 'meta' | 'variant'>>;
+type SnackUpdate = Partial<Omit<Snack, 'id' | 'status' | 'meta' | 'variant'>>;
 
 export interface ISnackManager {
   enqueue(input: NewSnack | string): Snack['id'] | null;
   update(id: Snack['id'], properties: SnackUpdate): void;
   close(id: Snack['id']): void;
   remove(id: Snack['id']): void;
+  subscribe(listener: Callback): Callback;
+  getActiveSnacks(): Snack[];
 }
 
 /** @internal */
@@ -17,8 +19,8 @@ export class SnackManager implements ISnackManager {
   private readonly options: Required<SnackProviderOptions>;
   private readonly snacks = new Map<Snack['id'], Snack>();
   private readonly snackIds: Snack['id'][] = [];
-  private readonly activeSnacks: Snack[] = [];
-  private readonly listeners = new Set<Listener>();
+  private readonly activeSnackIds: Snack['id'][] = [];
+  private readonly listeners = new Set<Callback>();
 
   constructor(options?: SnackProviderOptions) {
     this.options = getDefaultOptions(options);
@@ -61,7 +63,7 @@ export class SnackManager implements ISnackManager {
     return snack.id;
   };
 
-  update = (id: Snack['id'], properties: Partial<Snack>) => {
+  update = (id: Snack['id'], properties: Partial<Snack>): void => {
     const snack = this.snacks.get(id);
 
     if (!snack) {
@@ -73,15 +75,15 @@ export class SnackManager implements ISnackManager {
     this.processUpdate();
   };
 
-  close = (id: Snack['id']) => {
+  close = (id: Snack['id']): void => {
     this.update(id, { status: 'closing' });
   };
 
-  remove = (id: Snack['id']) => {
-    const activeIndex = this.activeSnacks.findIndex(s => s.id === id);
+  remove = (id: Snack['id']): void => {
+    const activeIndex = this.activeSnackIds.indexOf(id);
 
     if (activeIndex > -1) {
-      this.activeSnacks.splice(activeIndex, 1);
+      this.activeSnackIds.splice(activeIndex, 1);
     }
 
     const index = this.snackIds.indexOf(id);
@@ -95,7 +97,7 @@ export class SnackManager implements ISnackManager {
     this.processUpdate();
   };
 
-  subscribe = (listener: Listener) => {
+  subscribe = (listener: Callback): Callback => {
     console.log('subscribe');
 
     this.listeners.add(listener);
@@ -106,10 +108,12 @@ export class SnackManager implements ISnackManager {
     };
   };
 
-  getState = () => {
+  private _activeSnackCache: Snack[] = [];
+
+  getActiveSnacks = (): Snack[] => {
     console.log('getState');
 
-    return this.activeSnacks;
+    return this._activeSnackCache;
   };
 
   private dequeue = () => {
@@ -117,33 +121,36 @@ export class SnackManager implements ISnackManager {
       return;
     }
 
-    if (this.activeSnacks.length >= this.options.maxSnacks) {
-      const persistedNum = this.activeSnacks.reduce<number>((num, snack) => num + (snack.persist ? 1 : 0), 0);
+    if (this.activeSnackIds.length >= this.options.maxSnacks) {
+      const persistedNum = this.activeSnackIds.reduce<number>(
+        (num, id) => num + (this.snacks.get(id)!.persist ? 1 : 0),
+        0
+      );
 
-      if (persistedNum === this.activeSnacks.length) {
-        const [firstSnack] = this.activeSnacks;
+      if (persistedNum === this.activeSnackIds.length) {
+        const [firstSnackId] = this.activeSnackIds;
 
-        this.close(firstSnack.id);
+        this.close(firstSnackId);
       } else {
         return;
       }
     }
 
-    const nextId = this.snackIds[this.activeSnacks.length];
+    const nextId = this.snackIds[this.activeSnackIds.length];
 
     if (!nextId) {
       return;
     }
 
-    const nextSnack = this.snacks.get(nextId)!;
-
-    this.activeSnacks.push(nextSnack);
+    this.activeSnackIds.push(nextId);
 
     this.update(nextId, { status: 'open' });
   };
 
   private processUpdate = () => {
     console.log('processUpdate');
+
+    this._activeSnackCache = this.activeSnackIds.map(id => this.snacks.get(id)!);
 
     this.listeners.forEach(listener => listener());
   };
