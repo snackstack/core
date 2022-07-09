@@ -4,9 +4,11 @@ import { Snack, NewSnack, SnackProviderOptions } from './types';
 type KeyedSnacks = { [key in Snack['id']]: Snack };
 type Listener = () => void;
 
+type SnackUpdate = Partial<Omit<Snack, 'id' | 'open' | 'meta' | 'variant'>>;
+
 export interface ISnackManager {
   enqueue(input: NewSnack | string): Snack['id'] | null;
-  update(id: Snack['id'], properties: Partial<Snack>): void;
+  update(id: Snack['id'], properties: SnackUpdate): void;
   close(id: Snack['id']): void;
   remove(id: Snack['id']): void;
 }

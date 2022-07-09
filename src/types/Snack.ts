@@ -1,11 +1,11 @@
 type SnackVariant = 'default' | 'success' | 'info' | 'warning' | 'error';
 
-export interface Snack {
+export type Snack = {
   readonly id: string | number;
   message: React.ReactNode;
-  variant: SnackVariant;
+  readonly variant: SnackVariant;
   persist: boolean;
   open: boolean;
-  action?: React.ReactNode | ((snack: this) => React.ReactNode);
-  meta?: Record<string, any>;
-}
+  action?: React.ReactNode | ((snack: Snack) => React.ReactNode);
+  readonly meta?: Record<string, any>;
+};
