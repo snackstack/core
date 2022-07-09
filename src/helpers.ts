@@ -13,7 +13,7 @@ export function createSnack(payload: NewSnack, options: Required<SnackProviderOp
 }
 
 /** @internal */
-export function getDefaultOptions(options?: Partial<SnackProviderOptions>): Required<SnackProviderOptions> {
+export function getDefaultOptions(options?: Partial<SnackProviderOptions>): Readonly<Required<SnackProviderOptions>> {
   return {
     maxSnacks: options?.maxSnacks ?? 3,
     persist: options?.persist ?? false,

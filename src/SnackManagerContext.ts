@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { ISnackManager } from './SnackManager';
+import { SnackManager } from './SnackManager';
 
 /** @internal */
-export const SnackManagerContext = createContext<ISnackManager>(null!);
+export const SnackManagerContext = createContext<SnackManager>(null!);
 SnackManagerContext.displayName = 'SnackManagerContext';

@@ -5,18 +5,21 @@ type Callback = () => void;
 
 type SnackUpdate = Partial<Omit<Snack, 'id' | 'status' | 'meta' | 'variant'>>;
 
-export interface ISnackManager {
+type Options = Readonly<Required<SnackProviderOptions>>;
+
+export interface SnackManager {
   enqueue(input: NewSnack | string): Snack['id'] | null;
   update(id: Snack['id'], properties: SnackUpdate): void;
   close(id: Snack['id']): void;
   remove(id: Snack['id']): void;
   subscribe(listener: Callback): Callback;
   getActiveSnacks(): Snack[];
+  getOptions(): Options;
 }
 
 /** @internal */
-export class SnackManager implements ISnackManager {
-  private readonly options: Required<SnackProviderOptions>;
+export class Manager implements SnackManager {
+  private readonly options: Options;
   private readonly snacks = new Map<Snack['id'], Snack>();
   private readonly snackIds: Snack['id'][] = [];
   private readonly activeSnackIds: Snack['id'][] = [];
@@ -114,6 +117,10 @@ export class SnackManager implements ISnackManager {
     console.log('getState');
 
     return this._activeSnackCache;
+  };
+
+  getOptions = (): Options => {
+    return this.options;
   };
 
   private dequeue = () => {
