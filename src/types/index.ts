@@ -1,3 +1,3 @@
 export { Snack } from './Snack';
 export { NewSnack } from './NewSnack';
-export { SnackProviderOptions } from './SnackProviderOptions';
+export { SnackManagerOptions } from './SnackManagerOptions';

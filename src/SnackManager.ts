@@ -1,31 +1,20 @@
 import { getDefaultOptions, createSnack } from './helpers';
-import { Snack, NewSnack, SnackProviderOptions } from './types';
+import { Snack, NewSnack, SnackManagerOptions } from './types';
 
 type Callback = () => void;
 
 type SnackUpdate = Partial<Omit<Snack, 'id' | 'status' | 'meta' | 'variant'>>;
 
-type Options = Readonly<Required<SnackProviderOptions>>;
+type Options = Readonly<Required<SnackManagerOptions>>;
 
-export interface SnackManager {
-  enqueue(input: NewSnack | string): Snack['id'] | null;
-  update(id: Snack['id'], properties: SnackUpdate): void;
-  close(id: Snack['id']): void;
-  remove(id: Snack['id']): void;
-  subscribe(listener: Callback): Callback;
-  getActiveSnacks(): Snack[];
-  getOptions(): Options;
-}
-
-/** @internal */
-export class Manager implements SnackManager {
+export class SnackManager {
   private readonly options: Options;
   private readonly snacks = new Map<Snack['id'], Snack>();
   private readonly snackIds: Snack['id'][] = [];
   private readonly activeSnackIds: Snack['id'][] = [];
   private readonly listeners = new Set<Callback>();
 
-  constructor(options?: SnackProviderOptions) {
+  constructor(options?: SnackManagerOptions) {
     this.options = getDefaultOptions(options);
   }
 
@@ -66,7 +55,7 @@ export class Manager implements SnackManager {
     return snack.id;
   };
 
-  update = (id: Snack['id'], properties: Partial<Snack>): void => {
+  update = (id: Snack['id'], properties: SnackUpdate): void => {
     const snack = this.snacks.get(id);
 
     if (!snack) {
@@ -79,7 +68,9 @@ export class Manager implements SnackManager {
   };
 
   close = (id: Snack['id']): void => {
-    this.update(id, { status: 'closing' });
+    const update: Partial<Snack> = { status: 'closing' };
+
+    this.update(id, update);
   };
 
   remove = (id: Snack['id']): void => {
@@ -146,7 +137,9 @@ export class Manager implements SnackManager {
 
     this.activeSnackIds.push(nextId);
 
-    this.update(nextId, { status: 'open' });
+    const update: Partial<Snack> = { status: 'open' };
+
+    this.update(nextId, update);
   };
 
   private processUpdate = () => {

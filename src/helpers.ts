@@ -1,7 +1,7 @@
-import { Snack, NewSnack, SnackProviderOptions } from './types';
+import { Snack, NewSnack, SnackManagerOptions } from './types';
 
 /** @internal */
-export function createSnack(payload: NewSnack, options: Required<SnackProviderOptions>): Snack {
+export function createSnack(payload: NewSnack, options: Required<SnackManagerOptions>): Snack {
   return {
     ...payload,
     id: payload.id ?? new Date().getTime() + Math.random(),
@@ -13,7 +13,7 @@ export function createSnack(payload: NewSnack, options: Required<SnackProviderOp
 }
 
 /** @internal */
-export function getDefaultOptions(options?: Partial<SnackProviderOptions>): Readonly<Required<SnackProviderOptions>> {
+export function getDefaultOptions(options?: Partial<SnackManagerOptions>): Readonly<Required<SnackManagerOptions>> {
   return {
     maxSnacks: options?.maxSnacks ?? 3,
     persist: options?.persist ?? false,

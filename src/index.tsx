@@ -3,4 +3,4 @@ export { SnackProvider } from './SnackProvider';
 export { SnackItem } from './SnackItem';
 export { SnackManager } from './SnackManager';
 
-export { Snack, NewSnack, SnackProviderOptions } from './types';
+export { Snack, NewSnack, SnackManagerOptions } from './types';
