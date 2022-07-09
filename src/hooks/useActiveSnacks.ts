@@ -7,8 +7,6 @@ export function useActiveSnacks() {
 
   useDebugValue('useActiveSnacks');
 
-  console.log('useActiveSnacks');
-
   const getSnapshot = useCallback(manager.getActiveSnacks, [manager]);
 
   const activeSnacks = useSyncExternalStore(manager.subscribe, getSnapshot);

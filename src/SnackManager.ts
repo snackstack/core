@@ -101,12 +101,9 @@ export class Manager implements SnackManager {
   };
 
   subscribe = (listener: Callback): Callback => {
-    console.log('subscribe');
-
     this.listeners.add(listener);
 
     return () => {
-      console.log('unsubscribe');
       this.listeners.delete(listener);
     };
   };
@@ -114,8 +111,6 @@ export class Manager implements SnackManager {
   private _activeSnackCache: Snack[] = [];
 
   getActiveSnacks = (): Snack[] => {
-    console.log('getState');
-
     return this._activeSnackCache;
   };
 
@@ -155,8 +150,6 @@ export class Manager implements SnackManager {
   };
 
   private processUpdate = () => {
-    console.log('processUpdate');
-
     this._activeSnackCache = this.activeSnackIds.map(id => this.snacks.get(id)!);
 
     this.listeners.forEach(listener => listener());
