@@ -1,7 +1,6 @@
 import { getDefaultOptions, createSnack } from './helpers';
 import { Snack, NewSnack, SnackProviderOptions } from './types';
 
-type KeyedSnacks = { [key in Snack['id']]: Snack };
 type Listener = () => void;
 
 type SnackUpdate = Partial<Omit<Snack, 'id' | 'open' | 'meta' | 'variant'>>;
@@ -16,11 +15,10 @@ export interface ISnackManager {
 /** @internal */
 export class SnackManager implements ISnackManager {
   private readonly options: Required<SnackProviderOptions>;
-  private readonly ids: Snack['id'][] = [];
-  private readonly items: KeyedSnacks = {};
-  private readonly activeIds: Snack['id'][] = [];
+  private readonly snacks = new Map<Snack['id'], Snack>();
+  private readonly snackIds: Snack['id'][] = [];
+  private readonly activeSnacks: Snack[] = [];
   private readonly listeners = new Set<Listener>();
-  private _activeSnackCache: Snack[] = [];
 
   constructor(options?: SnackProviderOptions) {
     this.options = getDefaultOptions(options);
@@ -43,20 +41,19 @@ export class SnackManager implements ISnackManager {
       payload = input;
     }
 
-    if (payload.id && this.ids.some(id => id === payload.id)) {
+    if (payload.id && this.snacks.has(payload.id)) {
       return null;
     }
 
     if (this.options.preventDuplicates) {
-      if (this.ids.some(id => this.items[id].message === payload.message)) {
+      if (this.snackIds.some(id => this.snacks.get(id)!.message === payload.message)) {
         return null;
       }
     }
 
     const snack = createSnack(payload, this.options);
 
-    this.items[snack.id] = snack;
-    this.ids.push(snack.id);
+    this.snacks.set(snack.id, snack);
 
     this.dequeue();
 
@@ -64,13 +61,15 @@ export class SnackManager implements ISnackManager {
   };
 
   update = (id: Snack['id'], properties: Partial<Snack>) => {
-    if (!this.items[id]) {
+    const snack = this.snacks.get(id);
+
+    if (!snack) {
       return;
     }
 
-    this.items[id] = { ...this.items[id], ...properties };
+    this.snacks.set(id, { ...snack, ...properties });
 
-    this.notifyListeners();
+    this.processUpdate();
   };
 
   close = (id: Snack['id']) => {
@@ -78,21 +77,21 @@ export class SnackManager implements ISnackManager {
   };
 
   remove = (id: Snack['id']) => {
-    const activeIndex = this.ids.indexOf(id);
+    const activeIndex = this.activeSnacks.findIndex(s => s.id === id);
 
     if (activeIndex > -1) {
-      this.activeIds.splice(activeIndex, 1);
+      this.activeSnacks.splice(activeIndex, 1);
     }
 
-    const idIndex = this.ids.indexOf(id);
+    const index = this.snackIds.indexOf(id);
 
-    if (idIndex > -1) {
-      this.ids.splice(idIndex, 1);
+    if (index > -1) {
+      this.snackIds.splice(index, 1);
     }
 
-    delete this.items[id];
+    this.snacks.delete(id);
 
-    this.notifyListeners();
+    this.processUpdate();
   };
 
   subscribe = (listener: Listener) => {
@@ -109,43 +108,41 @@ export class SnackManager implements ISnackManager {
   getState = () => {
     console.log('getState');
 
-    return this._activeSnackCache;
+    return this.activeSnacks;
   };
 
   private dequeue = () => {
-    if (this.ids.length < 1) {
+    if (this.snacks.size < 1) {
       return;
     }
 
-    if (this.activeIds.length >= this.options.maxSnacks) {
-      const persitedItems = this.activeIds.reduce((acc: number, cur) => acc + (this.items[cur].persist ? 1 : 0), 0);
+    if (this.activeSnacks.length >= this.options.maxSnacks) {
+      const persistedNum = this.activeSnacks.reduce<number>((num, snack) => num + (snack.persist ? 1 : 0), 0);
 
-      if (persitedItems === this.activeIds.length) {
-        const [firstPeristedId] = this.activeIds;
+      if (persistedNum === this.activeSnacks.length) {
+        const [firstSnack] = this.activeSnacks;
 
-        this.close(firstPeristedId);
+        this.close(firstSnack.id);
+      } else {
+        return;
       }
-
-      return;
     }
 
-    const nextId = this.ids[this.activeIds.length];
+    const nextId = this.snackIds[this.activeSnacks.length];
 
     if (!nextId) {
       return;
     }
 
-    this.items[nextId].status = 'open';
+    const nextSnack = this.snacks.get(nextId)!;
 
-    this.activeIds.push(nextId);
+    this.activeSnacks.push(nextSnack);
 
-    this.notifyListeners();
+    this.update(nextId, { status: 'open' });
   };
 
-  private notifyListeners = () => {
-    console.log('notify listeners');
-
-    this._activeSnackCache = this.activeIds.map(id => this.items[id]);
+  private processUpdate = () => {
+    console.log('processUpdate');
 
     this.listeners.forEach(listener => listener());
   };
