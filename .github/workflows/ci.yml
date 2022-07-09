@@ -27,7 +27,7 @@ jobs:
           path: node_modules
           key: node_modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: node_modules-
-      - run: yarn install --frozen-lockfile --production
+      - run: yarn install --frozen-lockfile
       - run: yarn lint
       - run: yarn build
       - uses: actions/upload-artifact@v2
