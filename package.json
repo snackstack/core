@@ -20,8 +20,7 @@
   "module": "dist/core.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "engines": {
     "node": ">=10"
@@ -45,6 +44,7 @@
     "husky": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "resize-observer-polyfill": "^1.5.1",
     "size-limit": "^7.0.8",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
