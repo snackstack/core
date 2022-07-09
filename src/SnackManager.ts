@@ -92,14 +92,19 @@ export class SnackManager implements ISnackManager {
   };
 
   subscribe = (listener: Listener) => {
+    console.log('subscribe');
+
     this.listeners.add(listener);
 
     return () => {
+      console.log('unsubscribe');
       this.listeners.delete(listener);
     };
   };
 
   getState = () => {
+    console.log('getState');
+
     return this._activeSnackCache;
   };
 
@@ -132,6 +137,8 @@ export class SnackManager implements ISnackManager {
   };
 
   private notifyListeners = () => {
+    console.log('notify listeners');
+
     this._activeSnackCache = this.activeIds.map(id => this.items[id]);
 
     this.listeners.forEach(listener => listener());
