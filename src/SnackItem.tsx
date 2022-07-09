@@ -10,7 +10,7 @@ export const SnackItem: FC<Props> = ({ children, snackId }) => {
     (newHeight: number) => {
       manager.update(snackId, { height: newHeight });
     },
-    [snackId]
+    [snackId, manager]
   );
 
   const snackRef = useHeightObserver(handleHeightChanged);
