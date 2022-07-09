@@ -16,6 +16,16 @@
   "bugs": {
     "url": "https://github.com/snackstack/core/issues"
   },
+  "keywords": [
+    "notifications",
+    "toast",
+    "snackbar",
+    "snackstack",
+    "react",
+    "reactjs",
+    "javascript",
+    "typescript"
+  ],
   "main": "dist/index.js",
   "module": "dist/core.esm.js",
   "typings": "dist/index.d.ts",
