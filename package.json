@@ -38,16 +38,14 @@
     "resize-observer-polyfill": "^1.5.1"
   },
   "peerDependencies": {
-    "react": ">=16"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^7.0.8",
     "@types/react": "^18.0.15",
-    "@types/react-dom": "^18.0.6",
     "@types/use-sync-external-store": "^0.0.3",
     "husky": "^8.0.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "size-limit": "^7.0.8",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
