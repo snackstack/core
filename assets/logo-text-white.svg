@@ -1,0 +1,17 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1331 255" width="1331" height="255">
+	<title>New Project</title>
+	<defs>
+		<image  width="1500" height="500" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABdwAAAH0AQMAAAAdS31vAAAAAXNSR0IB2cksfwAAAANQTFRFAAAAp3o92gAAAAF0Uk5TAEDm2GYAAABySURBVHic7cExAQAAAMKg9U9tCU+gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOBjcTMAAdsHhyQAAAAASUVORK5CYII="/>
+		<image width="467" height="265" id="img2" href="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ2NyAyNjUiIHdpZHRoPSI0NjciIGhlaWdodD0iMjY1Ij4KCTx0aXRsZT5OZXcgUHJvamVjdDwvdGl0bGU+Cgk8ZGVmcz4KCQk8aW1hZ2UgIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIiBpZD0iaW1nMSIgaHJlZj0iZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFmUUFBQUgwQVFNQUFBRHhHRTNKQUFBQUFYTlNSMElCMmNrc2Z3QUFBQU5RVEZSRkFBQUFwM285MmdBQUFBRjBVazVUQUVEbTJHWUFBQUExU1VSQlZIaWM3Y0V4QVFBQUFNS2c5VS90WVEyZ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBRzU5QUFBQmhSTFk5Z0FBQUFCSlJVNUVya0pnZ2c9PSIvPgoJPC9kZWZzPgoJPHN0eWxlPgoJCS5zMCB7IGZpbGw6ICMwMjg4ZDEgfSAKCQkuczEgeyBmaWxsOiAjZjU3YzAwIH0gCgkJLnMyIHsgZmlsbDogI2QzMmYyZiB9IAoJPC9zdHlsZT4KCTx1c2UgaWQ9IkJhY2tncm91bmQiIGhyZWY9IiNpbWcxIiB4PSItMTYiIHk9Ii0xMTciLz4KCTxwYXRoIGlkPSJTaGFwZSAxIGNvcHkiIGNsYXNzPSJzMCIgZD0ibTMyLjcgMTg5LjJoMzYxLjVsLTI1LjcgNzEuNWgtMzYxLjV6Ii8+Cgk8cGF0aCBpZD0iU2hhcGUgMSIgY2xhc3M9InMxIiBkPSJtNjYuNiA5N2gzNjEuNWwtMjUuOCA3MS41aC0zNjEuNXoiLz4KCTxwYXRoIGlkPSJTaGFwZSAxIGNvcHkgMiIgY2xhc3M9InMyIiBkPSJtMTAwLjUgNWgzNjEuNWwtMjUuNyA3MS41aC0zNjEuNXoiLz4KPC9zdmc+"/>
+	</defs>
+	<style>
+		tspan { white-space:pre } 
+		.t0 { font-size: 250px;fill: #ffffff;font-weight: 400;font-family: "Allura-Regular", "Allura" } 
+	</style>
+	<use id="Background" href="#img1" x="-93" y="-73"/>
+	<use id="logo" href="#img2" transform="matrix(.872,0,0,.872,12,12)"/>
+	<text id="snackstack" style="transform: matrix(1,0,0,1,423,185)" >
+		<tspan x="0" y="0" class="t0">s</tspan><tspan  y="0" class="t0">n</tspan><tspan  y="0" class="t0">a</tspan><tspan  y="0" class="t0">c</tspan><tspan  y="0" class="t0">k</tspan><tspan  y="0" class="t0">s</tspan><tspan  y="0" class="t0">t</tspan><tspan  y="0" class="t0">a</tspan><tspan  y="0" class="t0">c</tspan><tspan  y="0" class="t0">k
+</tspan>
+	</text>
+</svg>
