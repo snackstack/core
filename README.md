@@ -25,33 +25,47 @@ yarn add @snackstack/core
 
 ## Setup
 
-Once you have installed snackstack, import the `SnackProvider` component and the `SnackManager` class.
+Once you have installed snackstack, import the `SnackProvider` and `SnackStack` component, as well as the `SnackManager` class.
 
 Instantiate a new instance of the `SnackManager` class and optionally pass an options object of type `SnackManagerOptions` to its constructor.
 
 Now that the manager is setup, wrap the `SnackProvider` around the parts of your application that should be able to manage and display notifications. The newly created `SnackManager` instance needs to be passed as value to the `manager` property on the provider.
 
+Place the `SnackStack` component somewhere below the `SnackProvider` and specify a component used to render your notifications.
+
 ```diff
-import React from "react";
-import ReactDOM from "react-dom/client";
-+ import { SnackProvider, SnackManager } from "@snackstack/core";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
++ import { SnackProvider, SnackStack, SnackManager } from '@snackstack/core';
 
 + const snackManager = new SnackManager({ maxSnacks: 7 });
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
   <React.StrictMode>
 +   <SnackProvider manager={snackManager}>
       <App />
+
++     <SnackStack Component={MyNotification} />
 +   </SnackProvider>
   </React.StrictMode>
 );
+
++ const MyNotification: FC<SnackProps> = ({ message, offset }) => {
++   return <div style={{ top: offset }}>{message}</div>;
++ };
 ```
 
-Now you can use the `useSnackManager` hook to manage notifications in any component below the `SnackProvider`.
+While this gives you full creative freedom to design your notification component, you might prefer a pre-built solution:
+
+- [@snackstack/mui](https://github.com/snackstack/mui): Adapter for [Material UI](https://mui.com)
+
+[Learn more about displaying notifications](https://snackstack.github.io/docs/guides/displaying-notifications)
+
+## Managing notifications
+
+Once setup, notifications can be managed through the `SnackManager`. You can either use the instance you previously instantiated or the `useSnackManager` hook (works only in components rendered below the `SnackProvider`).
 
 ```diff
 + import { useSnackManager } from '@snackstack/core';
@@ -67,12 +81,4 @@ function App() {
 }
 ```
 
-Don't worry if this code does not appear to do anything, this is because we have not specified a rendering mechanism for our notifications - remember `@snackstack/core` is agnostic to any component library and so forth!
-
-The quickest way to render your notifications is by using one of our pre-built adapters:
-
-- [@snackstack/mui](https://github.com/snackstack/mui): Adapter for [Material UI](https://mui.com)
-
 [Learn more about managing notifications](https://snackstack.github.io/docs/guides/managing-notifications)
-
-[Learn more about displaying notifications](https://snackstack.github.io/docs/guides/displaying-notifications)
