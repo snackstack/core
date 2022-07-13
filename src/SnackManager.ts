@@ -87,6 +87,8 @@ export class SnackManager {
     this.snacks.delete(id);
 
     this.processUpdate();
+
+    this.dequeue();
   };
 
   subscribe = (listener: Callback): Callback => {
