@@ -36,7 +36,7 @@ Place the `SnackStack` component somewhere below the `SnackProvider` and specify
 ```diff
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-+ import { SnackProvider, SnackStack, SnackManager } from '@snackstack/core';
++ import { SnackProvider, SnackStack, SnackManager, SnackProps } from '@snackstack/core';
 
 + const snackManager = new SnackManager({ maxSnacks: 7 });
 
@@ -52,10 +52,12 @@ root.render(
   </React.StrictMode>
 );
 
-+ const MyNotification = React.forwardRef<unknown, SnackProps>(({ message, offset }) => {
-+   return <div style={{ top: offset }}>{message}</div>;
++ const MyNotification = React.forwardRef<unknown, SnackProps>(({ message, offset }, ref) => {
++   return <div ref={ref} style={{ top: offset }}>{message}</div>;
 + });
 ```
+
+> ⚠️ Note: If you are using a custom component, make sure you are [forwarding a ref](https://reactjs.org/docs/forwarding-refs.html) to a native element inside of it.
 
 While this gives you full creative freedom to design your notification component, you might prefer a pre-built solution:
 
