@@ -114,19 +114,21 @@ export class SnackManager {
       return;
     }
 
+    // Are we displaying the maximum number of snacks?
     if (this.activeSnackIds.length >= this.options.maxSnacks) {
       const persistedNum = this.activeSnackIds.reduce<number>(
         (num, id) => num + (this.snacks.get(id)!.persist ? 1 : 0),
         0
       );
 
+      // Are all of the displayed snacks persisted?
       if (persistedNum === this.activeSnackIds.length) {
         const [firstSnackId] = this.activeSnackIds;
 
         this.close(firstSnackId);
-      } else {
-        return;
       }
+
+      return;
     }
 
     const nextId = this.snackIds[this.activeSnackIds.length];
