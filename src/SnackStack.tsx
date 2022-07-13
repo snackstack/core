@@ -42,7 +42,7 @@ export const SnackStack: FC<SnackStackProps> = ({
 
         previousSnack = snack;
 
-        return <InnerSnack snack={snack} isActive={isActive} offset={offset} Component={Component} />;
+        return <InnerSnack key={snack.id} snack={snack} isActive={isActive} offset={offset} Component={Component} />;
       })}
     </>
   );
