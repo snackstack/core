@@ -1,4 +1,4 @@
-<p align="center" style="font-size: 30px;">@snackstack/core</p>
+<h1 align="center" style="font-size: 30px;">@snackstack/core</h1>
 <p align="center">Component / state management library agnostic way to manage notifications</a></p>
 
 <p align="center">
