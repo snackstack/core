@@ -1,5 +1,5 @@
-![Logo with Text](./assets/logo-text-dark.svg#gh-light-mode-only)
-![Logo with Text](./assets/logo-text-light.svg#gh-dark-mode-only)
+<p align="center" style="font-size: 30px;">@snackstack/core</p>
+<p align="center">Component / state management library agnostic way to manage notifications</a></p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@snackstack/core" alt="npm.js package link">
@@ -8,8 +8,6 @@
     <img src="https://img.shields.io/npm/l/@snackstack/core?color=00C853" alt="Project license" />
   </a>
 </p>
-
-`@snackstack/core` is a component library agnostic way to manage the queueing behavior of notifications, without any dependencies on third party state management solutions.
 
 ## Installation
 
@@ -55,14 +53,14 @@ root.render(
 
 Now you can use the `useSnackManager` hook to manage notifications in any component below the `SnackProvider`.
 
-```tsx
-import { useSnackManager } from '@snackstack/core';
+```diff
++ import { useSnackManager } from '@snackstack/core';
 
 function App() {
-  const manager = useSnackManager();
++ const manager = useSnackManager();
 
   const handleClick = () => {
-    manager.enqueue('A notification');
++   manager.enqueue('A notification');
   };
 
   return <button onClick={handleClick}>Show notification</button>;
