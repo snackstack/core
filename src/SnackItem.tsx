@@ -2,9 +2,9 @@ import React, { FC, useCallback } from 'react';
 import { useSnackManager, useHeightObserver } from './hooks';
 import { Snack } from './types';
 
-type Props = { snackId: Snack['id']; children: React.ReactElement };
+export type SnackItemProps = { snackId: Snack['id']; children: React.ReactElement };
 
-export const SnackItem: FC<Props> = ({ children, snackId }) => {
+export const SnackItem: FC<SnackItemProps> = ({ children, snackId }) => {
   const manager = useSnackManager();
   const handleHeightChanged = useCallback(
     (newHeight: number) => {

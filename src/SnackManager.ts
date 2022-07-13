@@ -99,7 +99,7 @@ export class SnackManager {
 
   private _activeSnackCache: Snack[] = [];
 
-  getActiveSnacks = (): Snack[] => {
+  getActiveSnacks = (): Readonly<Snack>[] => {
     return this._activeSnackCache;
   };
 

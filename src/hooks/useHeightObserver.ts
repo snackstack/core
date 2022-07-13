@@ -3,6 +3,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 
 type HeightCallback = (newHeight: number) => void;
 
+/** @internal */
 export function useHeightObserver(onHeightChanged: HeightCallback) {
   const ref = useRef<HTMLElement>(null);
 
