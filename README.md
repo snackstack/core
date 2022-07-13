@@ -52,9 +52,9 @@ root.render(
   </React.StrictMode>
 );
 
-+ const MyNotification: FC<SnackProps> = ({ message, offset }) => {
++ const MyNotification = React.forwardRef<unknown, SnackProps>(({ message, offset }) => {
 +   return <div style={{ top: offset }}>{message}</div>;
-+ };
++ });
 ```
 
 While this gives you full creative freedom to design your notification component, you might prefer a pre-built solution:
